@@ -1,0 +1,1888 @@
+\documentclass[11pt, uplatex, dvipdfmx, titlepage]{jsarticle}
+\usepackage{amsthm,amsmath,amssymb, enumerate,bm,fancyhdr, braket, ascmac, graphicx, multirow, url}
+\usepackage[cc]{titlepic}
+
+
+%\renewcommand{\arraystretch}{1.2}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\trs}[1]{{}^{t}~\!\!#1}
+
+\renewcommand{\i}{\mathbf{i}}
+\renewcommand{\bar}[1]{\overline{#1}}
+
+
+\DeclareMathOperator{\Isom}{Isom}
+\DeclareMathOperator{\Fix}{Fix}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\Aff}{Aff}
+% \DeclareMathOperator{\PGL}{PGL}
+% \DeclareMathOperator{\GL}{GL}
+% \DeclareMathOperator{\Orth}{Orth}
+% \DeclareMathOperator{\SO}{SO}
+
+\renewcommand{\O}{\textrm{O}}
+
+
+%ページ上部タイトル内のアルファベット大文字化回避
+% \makeatletter
+% \def\ps@fancy{%
+% \def\sectionmark##1{\markboth{\ifnum \c@secnumdepth>\z@ \thesection\hskip 1em\relax \fi ##1}{}}%
+% \def\subsectionmark##1{\markright {\ifnum \c@secnumdepth >\@ne \thesubsection\hskip 1em\relax \fi ##1}}%
+% \ps@@fancy
+% \gdef\ps@fancy{\@fancyplainfalse\ps@@fancy}%
+% \ifdim\headwidth<0sp
+% \global\advance\headwidth123456789sp\global\advance\headwidth\textwidth
+% \fi
+% }
+%  \makeatother
+
+\makeatletter
+\renewcommand{\theequation}{%
+\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+\makeatother
+
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+%        \itshape
+         \bfseries
+%    #1\@addpunct{.}]\ignorespaces
+    {#1}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+
+\theoremstyle{definition}
+\newtheorem{theorem}{定理}[section]
+\newtheorem*{definition}{定義}
+\newtheorem{example}{例}
+\newtheorem{lemma}{補題}[section]
+\renewcommand{\proofname}{\textbf{証明}}
+\newtheorem*{remark}{注意}
+
+
+\pagestyle{fancy}
+\chead{\leftmark}
+\lhead{}
+\rhead{}
+\cfoot{\thepage}
+
+%\setcounter{section}{-1}
+
+\begin{document}
+
+
+\title{線形代数たっぷり ユークリッド空間 $\mathbb{R}^n$ の合同変換}
+\author{内海 和樹}
+\date{\today}
+
+\maketitle
+  
+
+
+\section*{はじめに}
+
+
+$n$ 次元ユークリッド空間 $\mathbb{R}^n$ の合同変換を線形代数をふんだん
+に使って分類してみました．ここでいうユークリッド空間とは，$n$ 次列ベク
+トルの集合 $\mathbb{R}^n$ に通常の方法で実線形空間，内積空間，ノルム空
+間，距離空間の構造を入れた，構造てんこ盛りフルトッピングの空間を指しま
+す．
+
+平面 $\mathbb{R}^2$ と空間 $\mathbb{R}^3$ の合同変換については，例え
+ば\cite{Kawasaki}で詳しく説明されています．しかしなが
+ら，\cite{Kawasaki}では個々の合同変換が主に幾何学的に記述され，線形代数
+的な記述が物足りないと私は感じました．$\mathbb{R}^n$ の合同変換 $f$ は
+直交行列 $A$ とベクトル $\bm{b}$ によって $f(\bm{x}) = A\bm{x} +
+\bm{b}$ と書けるのだから，この直交行列 $A$ とベクトル $\bm{b}$ の情報を
+使って分類されてしかるべきだと思いますが，なかなかそのようなことが書か
+れた文献を見つけることができませんでした\footnote{そのような文献をご存
+  知の方は教えて頂けるとうれしいです．}．それはたぶん探し方が悪いのだと
+は思いますが，文献探しに力を入れるよりも自分で考えた方が楽しそうだった
+のでそうしてみました．それが本稿です．がっつり線形代数を使います．
+
+まずは，平面 $\mathbb{R}^2$ と空間 $\mathbb{R}^3$ の合同変換を線形代数
+的に調べ，\cite{Kawasaki}と同様の分類表に至ることができました．そちらは
+別記事
+\begin{center}
+  \url{https://github.com/kazutsumi/CongruentTransformation/blob/main/CongTrans.pdf}
+\end{center}
+にまとめました．本稿では，これを一般化し，一般次元のユークリッド空
+間 $\mathbb{R}^n$ の合同変換を線形代数をたっぷり使って調べました．主
+に $n \geq 4$ を想定していますが，多少の修正を加えれば $n=1,2,3$ でも通用するよ
+うな記述をしているはずです．
+
+\ref{sec:orth}節の直交行列の標準化に関しては\cite{Fujioka}をかなり参考
+にしました．\ref{sec:n+1-reflection}節の $\mathbb{R}^n$ の
+合同変換が高々 $n+1$ 個の鏡映の合成に分解できることの証明
+は\cite{Iwahori}で学びました．
+
+
+
+\section*{参考文献}
+\begin{enumerate}[{[}1{]}]
+\bibitem{Iwahori} 岩堀長慶，『初学者のための合同変換群の話 幾何学の形での群論演習』，現代数学社（2020）．
+
+\bibitem{Kawasaki} 川崎徹郎，『文様の幾何学』，牧野書店（2014）．
+
+\bibitem{Kouno} 河野俊丈，『結晶群』，共立出版（2015）．
+
+\bibitem{Fujioka} 藤岡敦，「手を動かしてまなぶ 続・線形代数」，裳華房（2021）．
+\end{enumerate}
+
+ 
+ \newpage
+
+ \section*{記号・記法}
+ 
+
+\begin{itemize}
+  \setlength{\itemsep}{1zh}
+
+\item $\mathbb{R}^n$ を $n$ 次実列ベクトルのなす実線形空間と
+  し，$\mathbb{C}^n$ を $n$ 次複素ベクトルのなす複素線形空間とする．
+
+\item 行列 $A$ の転置行列を ${}^{t}A$ で表す．
+  
+\item $\mathbb{R}^n$ の標準内積を $\cdot$ で表す．つまり，$\bm{x} \cdot \bm{y} = {}^{t}\bm{x} \bm{y}$ である．
+
+\item $\mathbb{C}^n$ の標準エルミート内積も $\cdot$ で表す．つま
+  り，$\bm{x} \cdot \bm{y} = {}^{t} \bm{x} \bar{\bm{y}}={}^{t}\bar{\bm{y}}\bm{x}$ である．ここ
+  で，$\bar{\bm{y}}$ は $\bm{y}$ の成分を全て複素共役で置き換えたベクト
+  ルを表す．
+  
+
+\item $\mathbb{R}^n$ の標準内積から定まるノルムを $\| \; \|$ で表す．つ
+  まり，$\|\bm{x}\| = \sqrt{\bm{x}\cdot \bm{x}}$ である．
+
+\item 線形空間 $\mathbb{R}^n$ のゼロベクトルを $\bm{0}$ と書き，これを $\mathbb{R}^n$ の原点と
+  も呼ぶ．
+  
+\item 線形空間の基底は順序付きの組として $(\bm{e}_1, \bm{e}_2, \ldots
+  , \bm{e}_n)$ のように書く．例えば，$\mathbb{R}^3$
+  の基底$(\bm{e}_1, \bm{e}_2, \bm{e}_3)$ と
+  $(\bm{e}_1, \bm{e}_3, \bm{e}_2)$は別の基底として扱う．
+  
+\item $E$ を単位行列とし，次数 $n$ を明示したいときは $E_n$ と書く．
+
+\item 行列 $A$ に対応する線形変換 $\bm{x}\mapsto A\bm{x}$ を $T_A$ で表す．
+
+\item 正方行列 $A$ の固有値 $\lambda$ の固有空間を $V_A(\lambda)$ で表
+  す．なお，$\lambda$ が $A$ の固有値でないときも便宜
+  上 $V_A(\lambda)=\Set{ \bm{0}}$ と見なして同じ記号を用いる．
+  
+\item $\mathbb{R}^n$ の部分線形空間 $V$ の直交補空間を $V^{\perp}$ で表す：
+  \[
+    V^{\perp} := \Set{\bm{x} \in \mathbb{R}^n | \text{ 任意の } \bm{y}
+      \in V \text{ に対して } \bm{x}\cdot \bm{y}= 0}
+  \]
+
+\item 対角成分が左上から順に $a_1, \ldots, a_n$ である対角行列
+  を $\diag(a_1, \ldots, a_n)$ で表す：
+  \[
+    \diag(a_1, a_2, \ldots, a_n) := \left[
+      \begin{array}{ccc}
+        a_1 & & O\\
+         & \ddots &\\
+        O & & a_n
+      \end{array}
+    \right]
+  \]
+  
+
+\item 行列 $X$ の随伴行列を $X^*$ で表す．つまり，$X^* := {}^{t}\bar{X}$ である．  
+  
+\item 虚数単位は $\i$ で表す．アルファベットの $i$ は添字等で使いたいので，書体を変えて区別する．
+
+  
+\item 直交行列 $A,B$ が向きを保って同じ標準形に標準化されることを$ A \sim B$ で表す．
+  \[
+    A \sim B \overset{\textrm{def}}{\Longleftrightarrow} B= {}^{t}PAP \text{ か
+      つ } \det(P) =1 \text{ となる直交行列 $P$ が存在する}
+  \]
+
+% \item $\mathbb{R}^n$ の線形部分空間 $V$ とベクトル $\bm{v}_0 \in \mathbb{R}^n$ によって
+%   \[
+%     W = \bm{v}_0 + V := \Set{\bm{v}_0 + \bm{x} | \bm{x} \in V}
+%   \]
+%   の形に表せる $\mathbb{R}^n$ の部分集合 $W$ を $\mathbb{R}^n$ のアフィ
+%   ン部分空間という．このとき，アフィン部分空間 $W$ の次元を線形空
+%   間 $V$ の次元により定義する．つまり，$\dim W := \dim V$ とする．
+  
+  
+\end{itemize}
+
+\newpage
+
+
+\section{合同変換とは}\label{sec:whatis}
+
+$n$ を自然数とし，$\mathbb{R}^n$ を $n$ 次実列ベクトルのなす実線形空間
+とする．また，$\bm{x}, \bm{y} \in
+\mathbb{R}^n$に対して$\bm{x} \cdot \bm{y} := {}^{t}\bm{x} \bm{y}$ によっ
+て内積を定める．さらに，$\| \bm{x}\| := \sqrt{\bm{x} \cdot \bm{x}}$ に
+よってノルムを，$d(\bm{x}, \bm{y}) :=\|\bm{x} - \bm{y} \|$ よって距離を
+定める．この距離 $d$ を保つ変換が合同変換である．つまり，合同変換は次の
+ように定義される．なお，列ベクトルと点を同一視し，$\mathbb{R}^n$ の元は
+適宜ベクトルと見なしたり点と見なしたりする．
+
+
+\begin{definition}
+  写像 $f:\mathbb{R}^n \to \mathbb{R}^n$
+  が任意の$\bm{x}, \bm{y} \in \mathbb{R}^n$ に対して
+  \[
+    d(f(\bm{x}), f(\bm{y})) = d (\bm{x}, \bm{y}) \quad
+    \Big( \Longleftrightarrow \;\|f(\bm{x}) - f(\bm{y})\| = \|\bm{x} - \bm{y}\| \Big)
+  \]
+  を満たすとき，$f$ を $\mathbb{R}^n$ の\textbf{合同変換}または\textbf{等長変換 (isometry)} という．
+\end{definition}
+
+\begin{remark}
+  一般的な距離空間においては，距離を保つ全単射が等長写像（変換）と呼ば
+  れる．合同変換という用語はユークリッド空間などのいくつかの特別な空間
+  に対して使われるようである．また，上の定義では全単射性を仮定していな
+  いが，$\mathbb{R}^n$ 上で距離 $d$ を保つ写像は全単射である．この事実
+  は定理\ref{thm:affine_rep}から容易に導ける．
+\end{remark}
+
+\begin{theorem}\label{thm:trans-orth}
+  \begin{enumerate}[(1)]
+  \item ベクトル $\bm{b} \in \mathbb{R}^n$ による平行移
+    動 $t_{\bm{b}}(\bm{x}) = \bm{x} + \bm{b}$ は $\mathbb{R}^n$ の合同変
+    換である．
+  \item 直交変換，すなわち，内積を保つ $\mathbb{R}^n$ の線形変換は合同
+    変換である．
+  \end{enumerate}
+    \begin{proof}
+      \begin{enumerate}[(1)]
+      \item 任意の $\bm{x}, \bm{y}$ に対して
+      \[
+        \|t_{\bm{b}}(\bm{x}) - t_{\bm{b}}(\bm{y})\| =\|(\bm{x}+\bm{b}) -
+        (\bm{y}+\bm{b})\| = \|\bm{x}-\bm{y}\|
+      \]
+      が成り立つので，$t_{\bm{b}}$ は $\mathbb{R}^n$ の合同変換である．
+      
+    \item $f$ を $\mathbb{R}^n$ の直交変換とする．$f$ は内積を保つので，
+      任意の $\bm{x}, \bm{y} \in \mathbb{R}^n$ に対して
+      \[
+        \|f(\bm{x}) - f(\bm{y})\|^2 = \|f(\bm{x}-\bm{y})\|^2 = f(\bm{x}-\bm{y}) \cdot  f(\bm{x}-\bm{y})
+        = (\bm{x}-\bm{y}) \cdot (\bm{x}-\bm{y}) = \|\bm{x}-\bm{y}\|^2
+      \]
+      が成り立つ．よって，$f$ は $\mathbb{R}^n$ の合同変換である．
+    \end{enumerate}
+  \end{proof}
+\end{theorem}
+
+合同変換と合同変換を合成するとやはり合同変換である．すなわち，次が成り立つ．
+
+\begin{theorem}\label{thm:comp_isom}
+  $\mathbb{R}^n$ の2つの合同変換の合成は $\mathbb{R}^n$ の合同変換である．
+\end{theorem}
+
+\begin{proof}
+  $\mathbb{R}^n$ の合同変換 $f_1, f_2$ を任意にとる．任意の $\bm{x}, \bm{y} \in \mathbb{R}^n$ に対して
+  \begin{align*}
+    \|f_1 \left(f_2 \left(\bm{x}\right)\right)-f_1 \left(f_2\left(\bm{y}\right)\right)\|
+    = \| f_2(\bm{x})- f_2(\bm{y}) \| = \|\bm{x}- \bm{y}\|
+  \end{align*}
+  が成り立つので，合成 $f_1 \circ f_2$ は $\mathbb{R}^n$ の合同変換である．
+\end{proof}
+
+\newpage
+
+直交変換は線形変換なので原点 $\bm{0}$ を保つ合同変換である．この逆，すなわち，次が成り立つ．
+
+\begin{theorem}\label{thm:prev0}
+  原点 $\bm{0}$ を保つ合同変換は線形変換であり，従って，直交変換である．
+\end{theorem}
+
+\begin{proof}
+  $f$ を $\mathbb{R}^n$ の合同変換とし，$f(\bm{0}) = \bm{0}$ とする．このとき，任
+  意の $\bm{x} \in \mathbb{R}^n$ に対して
+  \[
+    \|f(\bm{x})\| = \|f(\bm{x})-\bm{0}\| =\|f(\bm{x})-f(\bm{0})\|  = \|\bm{x}-\bm{0}\| = \| \bm{x}\|
+  \]
+  が成り立つので，$f$ はノルムを保つ．これと内積とノルムの関係から任意
+  の $\bm{x}, \bm{y} \in \mathbb{R}^n$ に対して
+  \begin{align*}
+    f(\bm{x})\cdot  f(\bm{y})
+    &= \frac{1}{2}\left( \left\|f(\bm{x})\right\|^2+\left\|f(\bm{y})\right\|^2- \left\|f(\bm{x})-f(\bm{y})\right\|^2\right)\\
+    & =\frac{1}{2}\left(\left\|\bm{x}\right\|^2+\left\|\bm{y}\right\|^2 - \left\|\bm{x}-\bm{y}\right\|^2\right)
+      = \bm{x} \cdot  \bm{y}
+  \end{align*}
+  が成り立つので，$f$ は内積を保つ．以上から，任意の $\bm{x}, \bm{y}
+  \in \mathbb{R}^n$ と任意の $k \in \mathbb{R}$ に対して
+  \begin{align*}
+    \left\|f(\bm{x}+\bm{y}) -  f(\bm{x}) - f(\bm{y}) \right\|^2
+    =& \|f(\bm{x}+\bm{y})\|^2+\|f(\bm{x})\|^2+\|f(\bm{y})\|^2\\
+     &- 2f(\bm{x}+\bm{y})\cdot  f(\bm{x})
+       -2f(\bm{x}+\bm{y})\cdot  f(\bm{y}) +2f(\bm{x})\cdot f(\bm{y})\\
+    =& \| \bm{x} + \bm{y}\|^2 + \|\bm{x}\|^2+\|\bm{y}\|^2\\
+     &-2(\bm{x}+\bm{y})\cdot \bm{x} -2(\bm{x}+\bm{y})\cdot  \bm{y}+2\bm{x}\cdot \bm{y}\\
+    =& \|\bm{x}+\bm{y} - \bm{x}-\bm{y}\|^2=\|\bm{0}\|^2=0,\\
+    \left\| f(k\bm{x}) - k f(\bm{x})\right\|^2  
+    =& \|f(k\bm{x})\|^2-2 f(k\bm{x})\cdot kf(\bm{x}) + \|kf(\bm{x})\|^2\\
+    =& \|k\bm{x}\|^2 - 2k \left(f(k\bm{x})\cdot f(\bm{x}) \right)+ k^2\|f(\bm{x})\|^2\\
+    =& \|k\bm{x}\|^2-2k\left( k\bm{x}\cdot  \bm{x}\right) + k^2 \|\bm{x}\|^2=0
+  \end{align*}
+  が成り立つ．よって，$f$ は線形変換である．さらに，$f$ は内積を保つの
+  で直交変換である．
+\end{proof}
+
+この定理から，任意の合同変換は直交行列とベクトルによって表せる．すなわち，次が成り立つ．
+
+\begin{theorem}\label{thm:affine_rep}
+  $\mathbb{R}^n$ の任意の合同変換 $f$ は，$n$ 次直交行列 $A$
+  と $n$ 次ベクトル $\bm{b} \in \mathbb{R}^n$ によって
+  \[
+    f(\bm{x}) = A\bm{x} + \bm{b}
+  \]
+  と一意的に表せる．逆に，この形で表せる写像は $\mathbb{R}^n$ の合同変換である．
+\end{theorem}
+
+
+\begin{proof}
+  $f$ を $\mathbb{R}^n$ の任意の合同変換とする．$f(\bm{0})=\bm{b}$ とお
+  く．定理\ref{thm:trans-orth}(1)と定
+  理\ref{thm:comp_isom}よりベクトル $-\bm{b}$ による平行移
+  動 $t_{-\bm{b}}$ と $f$ の合成 $g = t_{-\bm{b}} \circ
+  f$ は $\mathbb{R}^n$ の合同変換である．$g(\bm{0})=\bm{0}$ なので，定
+  理\ref{thm:prev0}より $g$は直交変換である．従って，ある $n$ 次直交行
+  列 $A$
+  によって$g(\bm{x})=A\bm{x}$と表せる．よって，$f(\bm{x}) =
+  g(\bm{x})+\bm{b} = A\bm{x} + \bm{b}$である．また，
+  \[
+    f(\bm{x}) = A\bm{x}+\bm{b} = B\bm{x} + \bm{c}
+  \]
+  と表せたとすると，$f(\bm{0})=\bm{b}=\bm{c}$ である．従って，$f$ に対
+  して直交変換 $g$ が一意的に定まるので，対応する直交行列も一意的に定ま
+  るから $A=B$ である．後半の主張は明らかである．
+\end{proof}
+
+\newpage
+
+\section{合同変換の固定点集合}\label{sec:invariants}
+
+定理\ref{thm:affine_rep}により，$\mathbb{R}^n$ の合同変換 $f$ に対して $A
+\in O(n)$ と $\bm{b} \in \mathbb{R}^n$ が一意的に定まり
+\[
+  f(\bm{x}) = A\bm{x} + \bm{b}
+\]
+と書ける．以下，「合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ に対して」のように
+書いたら，$A \in O(n), \bm{b} \in \mathbb{R}^n$ であることは仮定しているものとする．
+
+
+\begin{definition}
+  $\mathbb{R}^n$ の変換 $f$ に対し，$f(\bm{x}) = \bm{x}$ を満た
+  す $\bm{x} \in \mathbb{R}^n$ を $f$ の固定点といい，$f$ の固定点全体の集合
+  を $\Fix(f)$ と書く．
+  \[
+    \Fix(f) := \Set{\bm{x} \in \mathbb{R}^n | f(\bm{x}) = \bm{x}}
+  \]
+\end{definition}
+
+$\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ に対して
+\[
+  f(\bm{x}) = \bm{x} \Leftrightarrow A\bm{x}+\bm{b} = \bm{x} \Leftrightarrow (E-A)\bm{x} = \bm{b}
+\]
+より，$n$ 変数連立1次方程式 $(E-A)\bm{x} = \bm{b}$ が解を持つな
+ら $\Fix(f)$ はその解空間である．つまり，$\Fix (f)$ は $\mathbb{R}^n$
+の部分アフィン空間である．特に，
+\[
+  \Fix(f) = \mathbb{R}^n \Leftrightarrow f = \id_{\mathbb{R}^n} \Leftrightarrow 
+  A=E \text{ かつ }\bm{b}=\bm{0}
+\]
+である．また，連立1次方程式 $(E-A)\bm{x} = \bm{b}$ に解がなけれ
+ば，$\Fix(f)$ は空集合である．特に，$\bm{0}$ でない任意の $\bm{b} \in
+\mathbb{R}^n$ に対し，$\Fix \left (t_{\bm{b}} \right)$ は空集合である．
+
+\begin{definition}
+  $\mathbb{R}^n$ の空でない部分アフィン空間 $V_1, V_2 \; (\dim V_1 \geq \dim V_2)$ に対し，
+  \[
+    V_2 \subset \bm{x}_0 + V_1 := \Set{ \bm{x}_0 + \bm{x} | \bm{x} \in V_1}
+  \]
+  を満たす $\bm{x}_0 \in \mathbb{R}^n$ が存在するとき，$V_1$ と $V_2$
+  は平行であるという．特に，$\dim V_1 = \dim V_2$ なら $V_2 = \bm{x}_0
+  +V_1$ である．
+\end{definition}
+
+
+\begin{theorem}\label{thm:dimfix}
+  $\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ の固定点集
+  合 $\Fix(f)$ が空集合でないとき，$\Fix(f)$ は $\dim V_A(1)$ に平行
+  で $\dim \Fix(f) = \dim V_A(1)$ である．
+\end{theorem}
+
+\begin{proof}
+  $g(\bm{x}) = \bm{x} - A\bm{x} = (E-A)\bm{x}$ とすれ
+  ば，$g$ は $\mathbb{R}^n$ の線形変換であり，$\Ker g = V_A(1)$ であ
+  る．$\Fix(f)$ が空集合でないことと連立1次方程式の理論から，任意に $\bm{x}_0 \in \Fix(f)$ をとれば
+  \[
+    \Fix(f) = \bm{x}_0 + \Ker g = \bm{x}_0 + V_A(1)
+  \]
+  と書ける．従って，$\Fix(f)$ と $V_A(1)$
+  は平行で，$\dim \Fix(f) = \dim \Ker g = \dim V_A(1)$ である．
+\end{proof}
+
+\begin{remark}
+  直交行列 $A$ が $1$ を固有値に持たないとき，$E-A$ が正則なので連
+  立1次方程式 $(E-A)\bm{x} = \bm{b}$ は唯一つの解
+  $\bm{x} = (E-A)^{-1}\bm{b}$を持つ．ここで，固有空間 $V_A(1)$ の記号を
+\[
+  V_A(1) := \Set{\bm{x} \in \mathbb{R}^n \mid (E-A)\bm{x} =\bm{0} }= \{\bm{0}\}
+\]
+として使うことにすれば，この事実を定理\ref{thm:dimfix}に含むことができる．
+\end{remark}
+
+
+
+\section{直交行列の標準形}\label{sec:orth}
+
+合同変換の分類においては直交変換の分類が，つまりは，直交行列
+の分類が重要である．そこで，今節では
+\[
+  S_{\theta}:=\left[
+    \begin{array}{rr}
+      \cos \theta & -\sin \theta\\
+      \sin \theta & \cos \theta
+    \end{array}
+  \right]
+\]
+として直交行列の標準化に関する以下の定理を証明する．
+
+  \begin{theorem}\label{thm:stdform}
+    任意の $n$ 次直交行列 $A$ は，ある $P \in SO(n)$ によって 
+    \begin{equation}\label{eq:std}
+      {}^{t}PAP = \left[
+        \begin{array}{cccccc}
+          S_{\theta_1} & & & & & O\\
+                       & \ddots & & & & \\
+                       & & S_{\theta_s} & & &\\
+                       & & & \pm 1 & &\\
+                       & & & & \ddots &\\
+          O & & & & & \pm 1
+        \end{array}
+      \right]
+    \end{equation}
+    と標準化される．ここで，$e^{\i \theta_1}, \ldots,
+    e^{\i\theta_s}$ は $A$ の固有値である．$A$ が実固有値を持たなければ右
+    下の $\pm 1$ たちは現れず，$A$ が実固有値のみを持つなら左上
+    の $S_{\theta_j}$ たちは現れない．
+  \end{theorem}
+
+  ここから，一旦話を実内積空間 $\mathbb{R}^n$ からユニタリ空
+  間 $\mathbb{C}^n$ に広げるが，最終的にはまた実内積空
+  間 $\mathbb{R}^n$ に戻ってくる．$\mathbb{C}^n$ を複素数成分の $n$ 次
+  列ベクトルのなす複素線形空間とし，$\bm{x}, \bm{y} \in \mathbb{C}^n$
+  に対して標準エルミート内積を $\bm{x}\cdot  \bm{y} = {}^{t} \bar{\bm{y}}
+  \bm{x}$ によって定める．ここで，$\bar{\bm{y}}$ は $\bm{y}$ の複素共役
+  を表す．\\
+
+  まずは，直交行列の固有値と固有ベクトルに関して次の定
+  理 \ref{thm:eigenvalue}, \ref{thm:eigen-conj}, \ref{thm:eigen-perp}は基本的である．
+  
+\begin{theorem}\label{thm:eigenvalue}
+  直交行列の固有値の絶対値は $1$ である．特に実固有値は $\pm 1$ のみで
+  ある．
+\end{theorem}
+
+\begin{proof}
+  $A \in O(n)$ とする．$\lambda \in \mathbb{C}$ を $A$ の固有
+  値，$\bm{x} \in \mathbb{C}^n$ をその固有ベクトルとする．つま
+  り，$A\bm{x} = \lambda \bm{x}$ かつ $\bm{x} \neq \bm{0}$ であ
+  る．$\bm{x}\cdot  \bm{x} \neq 0$ なので，
+  \[
+    \bm{x}\cdot  \bm{x} = (A\bm{x})\cdot (A\bm{x}) = (\lambda \bm{x})\cdot (\lambda
+    \bm{x}) = \lambda \bar{\lambda} (\bm{x}\cdot  \bm{x}) = |\lambda|^2
+    (\bm{x}\cdot  \bm{x})
+  \]
+  から $|\lambda|=1$ である．特に $\lambda \in \mathbb{R}$なら
+  ば $\lambda= \pm 1$ である．
+\end{proof}
+
+\begin{theorem}\label{thm:eigen-conj}
+  $\lambda \in \mathbb{C}$ が直交行列 $A$ の固有値で $\bm{x}$ がその固
+  有ベクトルなら，$\bar{\lambda}$ は $A$ の固有値
+  で $\bar{\bm{x}}$ は $\bar{\lambda}$ の固有ベクトルである．特に，$A$
+  の実数でない固有値の個数は偶数である．
+\end{theorem}
+
+\begin{proof}
+  $A\bm{x} = \lambda \bm{x}$ かつ $\bm{x} \neq \bm{0}$ なので，$\bar{\bm{x}} \neq \bm{0}$ であり，
+  \[
+    A \bar{\bm{x}} = \bar{A}\bar{\bm{x}} = \bar{A\bm{x}} = \bar{\lambda \bm{x}} = \bar{\lambda} \bar{\bm{x}}
+  \]
+  より，$\bar{\lambda}$ は $A$ の固有値で，$\bar{\bm{x}}$ はその固有ベクトルである．後半の主張は明らかである．
+\end{proof}
+
+\begin{theorem}\label{thm:eigen-perp}
+  直交行列の異なる固有値に属する固有ベクトル同士は直交する．
+\end{theorem}
+
+\begin{proof}
+  $A \in O(n)$ とする．$\lambda, \mu \in \mathbb{C}$ を $A$ の相異なる
+  固有値，$\bm{x}, \bm{y} \in \mathbb{C}^n$ をそれぞれの固有ベクトルと
+  する．$\bm{x}\cdot \bm{y}=0$
+  であることを示す．定理\ref{thm:eigenvalue}から $\bar{\mu}\mu= |\mu|^2=1$ なので
+  \[
+    \lambda(\bm{x}\cdot \bm{y}) = (\lambda \bm{x})\cdot (\bar{\mu}\mu
+    \bm{y}) = \mu\left(A\bm{x}\right) \cdot \left( \mu
+        \bm{y}\right) = \mu \left(A\bm{x}\right)\cdot
+      \left(A\bm{y}\right) = \mu (\bm{x} \cdot \bm{y})
+  \]
+  より，$(\lambda - \mu)(\bm{x}\cdot \bm{y})=0$ である．$\lambda \neq \mu$ なので，これより $\bm{x}\cdot \bm{y}=0$ である．
+\end{proof}
+
+定理\ref{thm:eigenvalue}と\ref{thm:eigen-conj}から，直交行列の固有値は全て$e^{\pm \i \theta} \;
+(\theta \in \mathbb{R})$ の形に表せる．また，直交行列は実ユニタリ行列で
+あり，ユニタリ行列は正規行列の一種である．その正規行列はユニタリ行列に
+よって対角化可能なので，複素数の範囲での直交行列の標準形は対角行
+列
+\begin{equation}\label{eq:diag}
+\left[
+  \begin{array}{cccccccc}
+    e^{\i\theta_1} & & & & & & & O\\
+                           & e^{-\i\theta_1} & & & & & &\\
+                           & & \ddots & & & & &\\
+                           & & & e^{\i\theta_s} & & & &\\
+                           & & & & e^{-\i\theta_s} & & &\\
+                           & & & & & \pm 1 & &\\
+                           & & & & & & \ddots & \\
+    O & & & & & & & \pm 1
+  \end{array}
+\right]
+\end{equation}
+である．よく知られた事実ではあるが，ユニタリ行列の場合（従って，直
+交行列の場合も含む）に限定してこれを証明しておく．
+
+以下，行列 $X$ の随伴行列を $X^*$ で表す．つまり，$X^* := {}^{t}\bar{X}$ とする．
+
+\begin{theorem}\label{thm:diag-by-unitary}
+  ユニタリ行列はユニタリ行列によって対角化可能である． 従って，直交行列も
+  ユニタリ行列によって対角化可能である．
+\end{theorem}
+
+\begin{proof}
+  $A$ を $n$ 次ユニタリ行列とし，$n$ に関する帰納法で示す．$n=1$ のとき
+  は明らかなので，$n \geq 2$ とする．$\lambda$ を $A$ の固有
+  値，$\bm{u}_1 \in \mathbb{C}^n$ をその単位固有ベクトルと
+  し，$(\bm{u}_2, \ldots, \bm{u}_n)$
+  を $\langle \bm{u}_1 \rangle ^{\perp}$ の正規直交基底とする
+  と，$U_1=\left[
+    \begin{array}{ccc}
+      \bm{u}_1 & \cdots & \bm{u}_n
+    \end{array}
+  \right]$ はユニタリ行列である．$j=2, \ldots, n$ に対して
+  \[
+    \bm{u}_1\cdot ( A \bm{u}_j) = \lambda^{-1} (\lambda \bm{u}_1) \cdot
+   ( A\bm{u}_j) = \lambda^{-1} (A\bm{u}_1) \cdot ( A\bm{u}_j) =
+    \lambda^{-1}(\bm{u}_1 \cdot  \bm{u}_j) =0
+  \]
+  なので，
+  \[
+    \begin{aligned}
+      U_1^*A U_1 &= U_1^*\left[
+        \begin{array}{ccc}
+          A \bm{u}_1 & \cdots & A\bm{u}_n
+        \end{array}
+      \right] = U_1^* \left[
+        \begin{array}{cccc}
+          \lambda \bm{u}_1 & A \bm{u}_2 & \cdots & A\bm{u}_n
+        \end{array}
+      \right]\\
+      &= \left[
+        \begin{array}{cccc}
+          \lambda {}^{t}\bar{\bm{u}_1}\bm{u}_1 & {}^{t}\bar{\bm{u}_1} A \bm{u}_2 & \cdots & {}^{t}\bar{\bm{u}_1} A \bm{u}_n\\
+          \lambda {}^{t}\bar{\bm{u}_2} \bm{u}_1 & {}^{t} \bar{\bm{u}_2} A\bm{u}_2 & \cdots & {}^{t}\bar{\bm{u}_2 }A \bm{u}_n\\
+          \vdots & \vdots & \ddots & \vdots\\
+          \lambda {}^{t} \bar{\bm{u}_n} \bm{u}_1 & {}^{t} \bar{\bm{u}_n} A\bm{u}_2 & \cdots & {}^{t}\bar{\bm{u}_n} A \bm{u}_n
+        \end{array}
+      \right]\\
+      &= \left[
+        \begin{array}{cccc}
+          \lambda (\bm{u}_1\cdot \bm{u}_1) & \bm{u}_1\cdot ( A\bm{u}_2) & \cdots & \bm{u}_1\cdot  (A\bm{u}_n)\\
+          \lambda (\bm{u}_1\cdot \bm{u}_2) & \bm{u}_2 \cdot ( A\bm{u}_2) & \cdots & \bm{u}_2\cdot (A\bm{u}_n)\\
+          \vdots & \vdots & \ddots & \vdots\\
+          \lambda (\bm{u}_1\cdot \bm{u}_n) & \bm{u}_n \cdot(A\bm{u}_2) & \cdots & \bm{u}_n \cdot (A\bm{u}_n)
+        \end{array}
+      \right] = \left[
+        \begin{array}{cc}
+          \lambda & \bm{0}\\
+          \bm{0} & A_1
+        \end{array}
+      \right]
+    \end{aligned}
+  \]
+  と書ける．ここで，$\left(U_1^* AU_1\right)^* \left( U_1^* A
+    U_1\right) = U_1^* A^* \left(U_1 U_1^* \right)AU_1=U_1^*\left( {}^{t}A A\right) U_1 =
+  U_1^*U_1=E_n$ より，$U_1^* AU_1$ はユニタリ行列である．従って，
+  \[
+    E_n= \left[
+      \begin{array}{cc}
+        1 & \bm{0}\\
+        \bm{0} & E_{n-1}
+      \end{array}
+    \right]=\left[
+      \begin{array}{cc}
+        \lambda & \bm{0}\\
+        \bm{0} & A_1
+      \end{array}
+    \right]^* \left[
+      \begin{array}{cc}
+        \lambda & \bm{0}\\
+        \bm{0} & A_1
+      \end{array}
+    \right] = \left[
+      \begin{array}{cc}
+        \bar{\lambda} & \bm{0}\\
+        \bm{0} & A_1^*
+      \end{array}
+    \right] \left[
+      \begin{array}{cc}
+        \lambda & \bm{0}\\
+        \bm{0} & A_1
+      \end{array}
+    \right] = \left[
+      \begin{array}{cc}
+        \lambda \bar{\lambda} & \bm{0}\\
+        \bm{0} & A_1^* A_1
+      \end{array}
+    \right]
+  \]
+  から，$A_1^*A_1 = E_{n-1}$ より $A_1$ は $n-1$ 次ユニタリ行列である．
+  よって，帰納法の仮定から ${U_2'}^*A_1U_2'$ が対角行列となるよう
+  な $n-1$ 次ユニタリ行列 $U_2'$ が存在するので
+  \[
+    U_2 = \left[
+      \begin{array}{cc}
+        1 & \bm{0}\\
+        \bm{0} & U_2'
+      \end{array}
+    \right], \quad U=U_1 U_2
+  \]
+  とおけば，$U$ は $n$ 次ユニタリ行列で，この $U$ によって $A$ は
+  \[
+    U^* A U = U_2^* \left(U_1^* A U_1 \right)U_2 = \left[
+      \begin{array}{cc}
+        1 & \bm{0}\\
+        \bm{0} & {U'_2}^*
+      \end{array}
+    \right] \left[
+      \begin{array}{cc}
+        \lambda & \bm{0}\\
+        \bm{0} & A_1
+      \end{array}
+    \right] \left[
+      \begin{array}{cc}
+        1 & \bm{0}\\
+        \bm{0} & U_2'
+      \end{array}
+    \right] = \left[
+      \begin{array}{cc}
+        \lambda & \bm{0}\\
+        \bm{0} & {U_2'}^* A_1 U_2'
+      \end{array}
+    \right]
+  \]
+  と対角化される．直交行列は実ユニタリ行列なので，後半の主張は明らかである．
+\end{proof}
+
+複素数の範囲まで広げた話を実数の範囲に戻し，定理\ref{thm:stdform}の証明を完成させる．
+
+\begin{proof}[定理\ref{thm:stdform}の証明]
+  $A \in O(n)$ とする．$A$ の固有多項式 $\varphi_A(t)$ は
+\[
+  \varphi_A(t) =(t-e^{\i
+    \theta_1})^{m_1}(t-e^{-\i\theta_1})^{m_1} \cdots (t-e^{\i \theta_s})^{m_s}(t-e^{-\i
+    \theta_s})^{m_s}(t-1)^{m^{+}} (t+1)^{m^{-}} 
+\]
+と因数分解される．ただし，$s=0$ や $m^{\pm}=0$ の場合も含む．定
+理\ref{thm:diag-by-unitary}より $A$
+は対角化可能なので，$\dim V_A(e^{ \pm \i
+  \theta_i}) = m_i, \; \dim V_A(\pm 1) = m^{\pm}$ であり，$\mathbb{C}^{n}$ は各固有空間によって
+\[
+  \mathbb{C}^n = V_A(e^{\i \theta_1}) \oplus  V_A(e^{-\i\theta_1}) \oplus \cdots \oplus
+  V_A(e^{\i\theta_s}) \oplus V_A(e^{-\i \theta_s}) \oplus V_A(1) \oplus V_A(-1) 
+\]
+と直和分解され，定理\ref{thm:eigen-perp}よりこれは直交直和分解でもある．
+従って，各固有空間の正規直交基底を並べたユニタリ行列 $U$ によって $A$
+は (\ref{eq:diag}) のように対角化される．特に，$V_A(1), V_A(-1)$ の正規
+直交基底としては実ベクトルのみからなるものを選べるので，それらをそれぞ
+れ
+\[
+  \left(\bm{p}^{+}_1, \ldots, \bm{p}^{+}_{m^{+}} \right), \quad \left(
+      \bm{p}_1^{-}, \ldots, \bm{p}^{-}_{m^{-}}\right)
+\]
+とする．また，$\bm{x}, \bm{y} \in \mathbb{C}^n$ に対し
+て
+\[
+  \bar{\bm{x}}\cdot \bar{\bm{y}} = {}^{t}\bm{y} \bar{\bm{x}} =
+  {}^{t}\bar{\bm{x}} \bm{y} = \bm{y}\cdot \bm{x} =\bar{\bm{x}\cdot \bm{y}}
+\]
+なので，$e^{-\i\theta_j} = \bar{e^{\i\theta_j}}$ であることと定
+理\ref{thm:eigen-conj}から， $(\bm{u}^j_1, \ldots,
+\bm{u}^j_{m_j})$ が $V_A(e^{\i \theta_j})$ の正規直交基底な
+ら $(\bar{\bm{u}^j_1}, \ldots, \bar{\bm{u}^j_{m_j}})$ は
+$V_A(e^{-\i \theta_j})$
+の正規直交基底である．従って，$j=1, \ldots, s$ に対して
+\[
+  ( \bm{u}^j_1, \bar{\bm{u}^j_1}, \ldots,
+  \bm{u}^j_{m_j}, \bar{\bm{u}^{j}_{m_j}}) 
+\]
+は $V_A(e^{\i \theta_j}) \oplus V_A(e^{-\i \theta_j})$ の正規直交基底であ
+る．ここで，各 $i=1,\ldots, m_j$ に対して
+\[
+  \bm{q}^j_{i} := \frac{1}{\sqrt{2}}\left( \bm{u}^j_i + \bar{\bm{u}^j_i}\right), \quad
+  \bm{r}^{j}_{i}:=\frac{\i}{\sqrt{2}}\left( \bm{u}^j_i - \bar{\bm{u}^j_i}\right)
+\]
+とすれば，$\bm{q}^j_i, \bm{r}^j_i \in \mathbb{R}^n$ であり，これらの間の内積はクロネッカーのデルタを用いて
+\[
+  \bm{q}^j_k \cdot \bm{q}^j_l = \bm{r}^j_k \cdot  \bm{r}^j_l=\delta_{kl}, \quad \bm{q}^j_k \cdot  \bm{r}^j_l= 0
+\]
+と書けるので，$(\bm{q}^j_1, \bm{r}^j_1, \ldots, \bm{q}^j_{m_j},
+\bm{r}^j_{m_j})$ は $V_A(e^{\i\theta_j}) \oplus V_A(e^{-\i\theta_j})$
+の正規直交基底である．よって，
+\[
+  P=\left[
+    \begin{array}{ccccccccccc}
+      \bm{q}^1_1 & \bm{r}^1_1 & \cdots & \bm{q}^s_{m_s} & \bm{r}^s_{m_s} & \bm{p}^{+}_1 & \cdots & \bm{p}^{+}_{m^+}
+      & \bm{p}^{-}_1 & \cdots & \bm{p}^{-}_{m^-}
+    \end{array}
+\right]
+\]
+とすれば，$P$ は実ユニタリ行列，すなわち，直交行列である．さら
+に，$e^{\i \theta_j} = \cos \theta_j + \i \sin\theta_j$ より
+\[
+  \begin{aligned}
+    A \bm{q}^{j}_{i} &= \frac{1}{\sqrt{2}} A \bm{u}^j_i + \frac{1}{\sqrt{2}}A\bar{\bm{u}^{j}_i }
+    = \frac{1}{\sqrt{2}} e^{\i\theta_j} \bm{u}^{j}_{i} + \frac{1}{\sqrt{2}} \bar{e^{\i \theta_j}}~\bar{\bm{u}^j_i}
+    = \left( \cos\theta_j\right) \bm{q}^j_i +  \left( \sin \theta_j\right) \bm{r}^j_i\\
+    A \bm{r}^{j}_{i} &= \frac{\i}{\sqrt{2}}A\bm{u}^j_i - \frac{\i}{\sqrt{2}}A\bar{\bm{u}^j_i}
+    = \frac{\i}{\sqrt{2}} e^{\i\theta_j}\bm{u}^j_i - \frac{\i}{\sqrt{2}}\bar{e^{\i\theta_j}}~\bar{\bm{u}^j_i}
+    = \left(-\sin \theta_j\right) \bm{q}^j_i + \left( \cos \theta_j\right) \bm{r}^j_i
+  \end{aligned}
+\]
+なので，$A\left[
+  \begin{array}{cc}
+    \bm{q}^j_i & \bm{r}^j_i
+  \end{array}\right] = \left[
+  \begin{array}{cc}
+    \bm{q}^j_i & \bm{r}^j_i
+  \end{array}
+\right] S_{\theta_j}$ である．以上から，直交行列 $A$ は直交行列 $P$ によって
+\begin{equation}\label{eq:std-block}
+  P^{-1}AP={}^{t}P AP = \left[
+    \begin{array}{ccccc}
+      S_{\theta_1} & & & &  O\\
+                   & \ddots & & & \\
+                   & & S_{\theta_s} & &\\
+                   & & & E_{m^{+}} & \\
+      O & & & & -E_{m^-}
+    \end{array}
+\right]
+\end{equation}
+と標準化される．ただし，各 $S_{\theta_j}$ は $m_j$ 個並ぶ．このと
+き，$\det P=-1$ なら $P$ のどこか $1$ 列を $-1$ 倍したものに置き換える
+ことで，$P \in SO(n)$ となるものを選び直せる．
+\end{proof}
+
+\begin{remark}
+  この証明の最後の $P \in SO(n)$ となるように $P$ を取り替えるところ
+  で，$A$ が実固有値を持てば $\bm{p}^{\pm}_{j}$ のどれ
+  か $1$ 個を $-\bm{p}^{\pm}_j$ に置き換えることで標準形を変化させ
+  ず $\det P=1$ とできるが，$A$ に実固有値がなければ標準形が変化する．
+  例えば，$P$ の $1$ 列目 $\bm{q}^1_1$ を $-\bm{q}^1_1$ に置き換えれ
+  ば，
+\[
+  \begin{aligned}
+    A \left( -\bm{q}^1_1\right) &= -\left( \cos
+      \theta_1\right)\bm{q}^1_1 -\left( \sin \theta_1\right)
+    \bm{r}^{1}_1 = \left(
+      \cos\left(-\theta_1\right)\right)\left(-\bm{q}^1_1\right) +
+    \left( \sin \left(-\theta_1\right) \right) \bm{r}^1_1\\
+    A\bm{r}^1_1&= \left( -\sin \theta_1\right) \bm{q}^1_1 + \left(
+      \cos \theta_1\right) \bm{r}^1_1 =
+    \left(-\sin\left(-\theta_1\right)\right) \left( -\bm{q}^1_1\right)
+    + \left( \cos\left(-\theta_1\right)\right) \bm{r}^1_1
+  \end{aligned}
+\]
+なので，標準形(\ref{eq:std-block})の左上の $S_{\theta_1}$ が $S_{-\theta_1}$ に置き換わる．
+\end{remark}
+
+定理\ref{thm:stdform}を $A$ の次数の偶奇によって分ける．$A\in O(n)$ の
+固有多項式 $\varphi_A(t)$ は
+\begin{equation}\label{eq:eigen-poly}
+  \varphi_A(t)=(t-e^{\i \theta_1})(t-e^{-\i \theta_1}) \cdots
+  (t-e^{\i\theta_s})(t-e^{-\i \theta_s})(t-1)^{m^+}(t+1)^{m^-}
+\end{equation}
+と因数分解される．ただし，$s=0$ や $m^{\pm}=0$ の場合も含み，$e^{\pm
+  \i\theta_j}$ たちに重複を許す．このとき，
+\begin{equation}\label{eq:deg-eigen}
+  2s+ m^{+} + m^{-} = n
+\end{equation}
+である．また，$\det A=(-1)^{m^-}$ なので，$\det A$ の符号によっ
+て $m^{-}$ の偶奇が定まり，$n$ の偶奇と合わせて $m^{+}$ の偶奇も定まる．
+以下，$k$ を正の整数とし，定理\ref{thm:stdform}を $n=2k$ のとき
+と $n=2k+1$ のときに分離する．
+
+\begin{theorem}\label{thm:stdeven}
+  任意の $A \in O(2k)$ はある $P \in SO(2k)$ によって次のいずれかの形に
+  標準化される．
+  \[
+    {}^{t}P A P =\left\{
+      \begin{array}{ll}
+        S(\theta_1, \ldots, \theta_k):= \diag\left( S_{\theta_1}, \ldots, S_{\theta_k}\right)
+        & (\det A=1) \\
+        R(\theta_1, \ldots, \theta_{k-1}):= \diag\left( S_{\theta_1}, \ldots, S_{\theta_{k-1}}, 1, -1\right)
+        & (\det A =-1)
+      \end{array}
+    \right.
+  \]
+  ここで，$e^{\pm \i \theta_1}, \ldots, e^{\pm \i \theta_k}$ は $A$ の
+  固有値である．なお，$S_0=E_2, \; S_{\pi}=-E_2$ である．ただし，$A
+  \in O(2)$ かつ $\det A=-1$ のときは ${}^{t}PAP= R_0:=\diag(1,-1)$ と標準化される．
+\end{theorem}
+
+\begin{proof}
+  $A \in O(2k)$ の固有多項式を(\ref{eq:eigen-poly})の通りとする．
+
+  まず，$\det A =1$ とする．$1=\det A=(-1)^{m^-}$ より $m^{-}$ は偶数で
+  ある．さらに，(\ref{eq:deg-eigen}) と $n=2k$ から $m^{+}$ も偶数であ
+  る．$S_{0}=E_2, \; S_{\pi} = -E_2$ なので，
+  \[
+    \theta_j = \left\{
+      \begin{array}{cl}
+        0 & \left(s+1 \leq j \leq s+m^{+}/2\right)\\
+        \pi & \left( s+m^{+}/2 \leq j \leq s+ (m^{+}+m^{-})/2 =k\right)
+      \end{array}
+    \right.
+  \]
+  とすれば，$A$ の標準形(\ref{eq:std})は
+  $\diag(S_{\theta_1}, \ldots, S_{\theta_s}, E_{m^{+}}, -E_{m^{-}})=
+  S(\theta_1, \ldots, \theta_k)$ である．
+
+  次に，$\det A=-1$ とする．$-1=\det A = (-1)^{m^-}$
+  より $m^{-}$ は奇数で，(\ref{eq:deg-eigen})と $n=2k$ から $m^{+}$ も
+  奇数である．よって，$\theta_j \; (j > s)$ を上と同様に適切に定めれ
+  ば，$A$ の標準形(\ref{eq:std})は
+  \[
+    \diag(S_{\theta_1}, \ldots, S_{\theta_s}, E_{m^{+}-1},
+    -E_{m^{-}-1}, 1, -1) = \diag( S_{\theta_1}, \ldots, S_{\theta_{k-1}}, 1, -1) = R(\theta_1, \ldots, \theta_{k-1})
+  \]
+  とできる．なお，$A \in O(2)$ の標準形に関しては既に示している．
+\end{proof}
+
+
+\begin{theorem}\label{thm:stdodd}
+  任意の $A \in O(2k+1)$ はある $P \in SO(2k+1)$ によって次の形に標準化される．
+  \[
+    {}^{t}PAP = \left\{
+      \begin{array}{ll}
+        S^{+}(\theta_1, \ldots, \theta_k) := \diag \left(S_{\theta_1}, \ldots, S_{\theta_k}, 1\right)
+        & (\det A=1)\\
+        S^{-}(\theta_1, \ldots, \theta_k) := \diag \left(S_{\theta_1}, \ldots, S_{\theta_k}, -1\right)
+        & (\det A=-1)
+      \end{array}
+    \right.
+  \]
+  ここで，$e^{\pm \i \theta_1}, \ldots, e^{\pm \i \theta_k}, \det A (=\pm 1)$ は $A$ の固有値である．
+\end{theorem}
+
+\begin{proof}
+  $A \in O(2k+1)$ の固有多項式を(\ref{eq:eigen-poly})の通りとす
+  る．(\ref{eq:deg-eigen}) と $n=2k+1$ から $m^{+}$ と $m^{-}$ の偶奇は
+  異なる．$\det A=(-1)^{m^-}$ なので，$\det A=1$ なら $m^{-}$ は偶数
+  で $m^{+}$ は奇数となり，特に $m^{+} \geq 1$ だから $1$ は $A$ の固有
+  値である．一方で，$\det A=-1$ なら $m^{-}$ が奇数で $m^{+}$ が偶数な
+  ので，$m^{-} \geq 1$ より $-1$ は $A$ の固有値である．いずれの場合
+  も，$\det A$ は $A$ の固有値であり，$A$ の標準形(\ref{eq:std})の対角
+  成分に $\det A$ は奇数個，$-\det A$ は偶数個並ぶので，$A$ の標準形
+  の左上 $(n-1) \times (n-1)$ ブロックは $S(\theta_1, \ldots,
+    \theta_k)$ で，$(n,n)$ 成分が $\det A$ となるようにできる．
+\end{proof}
+
+\begin{definition}
+  $A, B \in O(n)$ に対して $B={}^{t}PAP$ となる $P \in SO(n)$ が存在す
+  るとき，$A \sim B$ と書く．
+\end{definition}
+
+例えば，$A$ が $S(\theta_1, \ldots, \theta_k)$ に標準化されること
+を $A \sim S(\theta_1, \ldots, \theta_k)$ と書くための記号である．
+
+\newpage
+\section{$\mathbb{R}^n$ の直交変換}
+
+$A \in O(n)$ が $P =\left[
+  \begin{array}{ccc}
+    \bm{p}_1 & \cdots & \bm{p}_n
+  \end{array}
+\right] \in SO(n)$ によって標準化されるとし，$\mathbb{R}^n$ の直交変
+換 $T_A(\bm{x}) = A\bm{x}$ を分類する．空間の次元 $n$ の偶奇で分けるとやりやすい．\\
+
+
+まず，$n$ を偶数とし $n=2k$ とする．定
+理 \ref{thm:stdeven}より $A$ は $\det
+A=1$なら$S(\theta_1, \ldots, \theta_k)$ に標準化され，$\det A
+=-1$ なら $R(\theta_1, \ldots, \theta_{k-1})$ に標準化される．なお，標
+準形の対角ブロック $S_{\theta_i}$ に 単位行列 $E_2$ が含まれるときは，
+それらが全て右下に集まるように，つまり，$\trs{P}AP$ が
+\[
+  \diag( \ldots, E_{2}, \dots, E_2, 1, \pm 1)
+\]
+となるように $P$ の列ベクトル $\bm{p}_1, \ldots, \bm{p}_n$ を適宜並びかえておく．
+
+
+\begin{itemize}
+\setlength{\itemsep}{1zh}
+
+\item $\trs{P}AP=S(\theta_1, \ldots, \theta_k)$ のとき，$T_A$ は $2$ 次
+  元部分空間 $\langle \bm{p}_{2i-1}, \bm{p}_{2i}\rangle
+  $ 上の $\theta_i$ 回転たち $(i=1,\ldots, k)$ の合成，すなわち，多重回
+  転である．さらに細かく，次のように分類できる．ただし，表の中の
+  各 $\theta_i$ はいずれも$ S_{\theta_i} \neq E_2$ を満たすとする．
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c}
+      名前 & $\trs{P}AP$ & $\Fix(T_A)=V_A(1)$ & $\dim V_A(1)$\\ \hline
+      恒等変換 & $E_n$ & $\mathbb{R}^n$ & $n$ \\
+      単回転 & $S(\theta_1, 0, \ldots, 0)$
+                         & $\langle \bm{p}_3, \ldots, \bm{p}_n\rangle $ & $n-2$ \\
+      $2$ 重回転 & $S(\theta_1, \theta_2, 0, \ldots, 0)$
+                         & $\langle \bm{p}_5, \ldots, \bm{p}_n\rangle$ & $n-4$ \\
+      $\vdots$ & \vdots & \vdots & \vdots \\
+      $k-1$ 重回転 & $S(\theta_1, \ldots, \theta_{k-1}, 0)$
+                         & $\langle \bm{p}_{n-1}, \bm{p}_n \rangle$ & $2$ \\
+      $k$ 重回転 & $S(\theta_1, \ldots, \theta_k) $ & $\{\bm{0}\}$ & $0$
+    \end{tabular}
+  \end{table}
+
+\item $\trs{P}AP = R(\theta_1, \ldots, \theta_k)$ のと
+  き，$T_A$ は $2$次元部分空間 $\langle \bm{p}_{2i-1},
+  \bm{p}_{2i}\rangle $ 上の $\theta_i$ 回転たち $(i=1,\ldots, k-1)$ と
+  超平面$\langle \bm{p}_1, \ldots, \bm{p}_{n-1}\rangle$ に関する鏡映と
+  の合成，すなわち，多重回転鏡映である．さらに細かく，次のように分類で
+  きる．やはり $S_{\theta_i} \neq E_2$ とする．
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c}
+      名前 & $\trs{P}AP$ & $\Fix(T_A)= V_A(1)$ & $\dim V_A(1)$ \\ \hline
+      鏡映 & $R(0, \ldots, 0)$ & $\langle \bm{p}_1, \ldots, \bm{p}_{n-1}\rangle$  & $n-1$ \\
+      単回転鏡映 & $R(\theta_1, 0, \ldots, 0)$
+                         & $\langle \bm{p}_3, \ldots,  \bm{p}_{n-1}\rangle$ & $n-3$\\
+      $2$ 重回転鏡映 & $R(\theta_1, \theta_2, 0, \ldots, 0)$
+                         & $\langle \bm{p}_5, \ldots, \bm{p}_{n-1} \rangle$ & $n-5$\\
+      \vdots & \vdots & \vdots & \vdots\\
+      $k-2$ 重回転鏡映 & $R(\theta_1, \ldots, \theta_{k-2}, 0)$
+                         & $\langle \bm{p}_{n-3}, \bm{p}_{n-2}, \bm{p}_{n-1}\rangle$ & $3$ \\
+      $k-1$ 重回転鏡映 & $R(\theta_1, \ldots, \theta_{k-1})$ & $\langle \bm{p}_{n-1}\rangle$ & $1$
+    \end{tabular}
+  \end{table}
+  
+\end{itemize}
+
+次に，$n$ を奇数とし $n=2k+1$ とする．定
+理\ref{thm:stdodd}より $A$ は $\det A=1$
+なら$S^{+}(\theta_1, \ldots, \theta_{k})$ に標準化され，$\det A=-1$ な
+ら $S^{-}(\theta_1, \ldots, \theta_k)$
+に標準化される．また，先と同様に標準形の対角ブロック $S_{\theta_i}$ に
+単位行列が含まれる場合は，それらが右下に集まるように，つまり，
+\[
+  \trs{P}AP= \diag(\ldots, E_2, \ldots, E_2, \pm 1)
+\]
+となるように $P$ の列ベクトル $\bm{p}_1, \ldots, \bm{p}_n$ を適宜並び替えておく．
+
+\begin{itemize}
+  \setlength{\itemsep}{1zh}
+  
+\item $\trs{P}AP=S^{+}(\theta_1, \ldots, \theta_k)$ のと
+  き，$T_A$ は $2$ 次元部分空間 $\langle \bm{p}_{2i-1},
+  \bm{p}_{2i}\rangle$ 上の $\theta_i$ 回転たち $(i=1,\ldots, k)$ の合成，
+  すなわち，多重回転である．さらに細かく，次のように分類でき
+  る．ただし，各 $\theta_i$ は $S_{\theta_i} \neq E_2$ を満たすとする．
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c}
+      名前 & $\trs{P}AP$ & $\Fix(T_A)=V_A(1)$ & $\dim V_A(1)$\\ \hline
+      恒等変換 & $ E_n$ & $\mathbb{R}^n$ & $n$\\
+      単回転 & $S^{+}(\theta_1, 0 \ldots, 0)$
+                         & $\langle \bm{p}_3, \ldots, \bm{p}_n \rangle$ & $n-2$\\
+      $2$ 重回転 & $S^{+}(\theta_1, \theta_2, 0, \ldots, 0)$
+                         & $\langle \bm{p}_5, \ldots, \bm{p}_n\rangle $ & $n-4$\\
+      \vdots & \vdots & \vdots & \vdots\\
+      $k-1$ 重回転 & $S^{+}(\theta_1, \ldots, \theta_{k-1}, 0)$
+                         & $\langle \bm{p}_{n-2}, \bm{p}_{n-1} , \bm{p}_n\rangle$ & $3$\\
+      $k$ 重回転 & $S^{+}(\theta_1, \ldots, \theta_k)$ & $\langle \bm{p}_n \rangle$ & $1$
+                                      
+    \end{tabular}
+  \end{table}
+\item $\trs{P}AP = S^{-}(\theta_1, \ldots, \theta_k)$ のと
+  き，$T_A$ は $2$ 次元部分空間 $\langle \bm{p}_{2i-1},
+  \bm{p}_{2i}\rangle$ 上の $\theta_i$ 回転たち $(i=1, \ldots, k)$ と超平
+  面 $\langle \bm{p}_1, \ldots, \bm{p}_{n-1}\rangle$ に関する鏡映と
+  の合成，すなわち，多重回転鏡映である．やはり $S_{\theta_i} \neq E_2$ とする．
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c}
+      名前 & $\trs{P}AP$ & $\Fix(T_A)=V_A(1)$ & $\dim V_A(1)$\\ \hline
+      鏡映 & $S^{-}(0, \ldots, 0)$ & $\langle \bm{p}_1, \ldots, \bm{p}_{n-1}\rangle$ & $n-1$\\
+      単回転鏡映 & $S^{-}(\theta_1, 0, \ldots, 0)$
+                         & $\langle \bm{p}_3, \ldots, \bm{p}_{n-1}\rangle$ & $n-3$\\
+      $2$ 重回転鏡映 & $S^{-}(\theta_1, \theta_2, 0, \ldots, 0)$
+                         & $\langle \bm{p}_5, \ldots, \bm{p}_{n-1}\rangle$ & $n-5$\\
+      \vdots & \vdots & \vdots & \vdots\\
+      $k-1$ 重回転鏡映 & $S^{-}(\theta_1, \ldots, \theta_{k-1},0)$
+                         & $\langle \bm{p}_{n-2}, \bm{p}_{n-1}\rangle$ & $2$\\
+      $k$ 重回転鏡映 & $S^{-}(\theta_1, \ldots, \theta_k)$ & $\{\bm{0}\}$ & $0$
+    \end{tabular}
+  \end{table}
+\end{itemize}
+
+\newpage
+
+
+\section{鏡映}\label{sec:reflection}
+
+合同変換全体を分類する前に $\mathbb{R}^n$ の鏡映についてまとめる．
+まずは鏡映を次のように定義する．
+
+\begin{definition}
+  $\mathbb{R}^n$ の超平面を固定点集合とする合同変換，すなわち，$\dim
+  \Fix(f)=n-1$ となる合同変換 $f$ を $\mathbb{R}^n$ の鏡映という．定
+  理\ref{thm:ref-hyperplane}で示すように，$\mathbb{R}^n$ の鏡映全体
+  と $\mathbb{R}^n$ の超平面全体とは1対1に対応するから，超平面 $H$ を固
+  定点集合とする鏡映は $H$ に関する鏡映と呼ばれる．
+\end{definition}
+
+鏡映は合同変換なので，
+\[
+  f(\bm{x}) = A\bm{x} + \bm{b}
+\]
+の形で表しておきたい．これ以降 $R_{\bm{0}} := \diag(1, \ldots, 1, -1)$ とする．
+
+\begin{theorem}\label{thm:refconcrete}
+  $\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ は $A \sim
+  R_{\bm{0}}$ かつ $\bm{b} \in V_A(-1)$ であるとき，またそのときに限り，鏡映で
+  ある．このとき $\Fix(f)$ は $\bm{b}/2$ を通り $V_A(1)$ に平行な超平面
+  である．
+\end{theorem}
+
+\begin{proof}
+  $A\sim R_{\bm{0}}$ かつ $\bm{b} \in V_A(-1)$ であるとする．合同変
+  換$f(\bm{x}) = A \bm{x} + \bm{b}$ に対し
+  \[
+    f\left( \frac{\bm{b}}{2}\right) = \frac{1}{2} A \bm{b} + \bm{b} 
+    =-\frac{\bm{b}}{2} + \bm{b} =\frac{\bm{b}}{2} 
+  \]
+  より $\bm{b}/2 \in \Fix(f)$ であるから， $\Fix(f)$ は空集合でない．よっ
+  て，定理\ref{thm:dimfix}から $\dim \Fix(f) = \dim V_A(1) =
+  n-1$ より $f$ は $\mathbb{R}^n$ の鏡映である．
+
+  逆に，$f(\bm{x}) = A\bm{x} + \bm{b}$
+  を鏡映とする．まず$A \sim R_{\bm{0}}$を示す．定
+  理\ref{thm:dimfix}より$\dim V_A(1) = \dim \Fix(f) = n-1$ だから $A$
+  は $1$ を固有値に持ち，その重複度は $n-1$ 以上である．定
+  理\ref{thm:eigen-conj}より残りの固有値は実数なので $1$ か $-1$ であり，
+  定理\ref{thm:stdform}から $A \sim E$ または $A \sim R_{\bm{0}}$ であ
+  る．$A \sim E$ なら $A=E$ だが，このとき
+  $\dim V_A(1) = \dim \mathbb{R}^n = n \neq n-1$ より，これは $f$ が鏡
+  映であることに反するので $A \sim R_{\bm{0}}$ である．次に $\bm{b}
+  \in V_A(-1)$ を示す．$A$ に対応する直交変換によって
+  $\mathbb{R}^n = V_A(1) \oplus V_A(-1)$ と固有空間分解できる．そこで，
+  \[
+    \bm{b} = \bm{b}^{+} + \bm{b}^{-}, \quad \bm{b}^{+} \in V_A(1), \; \bm{b}^{-} \in V_A(-1)
+  \]
+  とする．$\bm{x} \in \Fix(f)$ に対して
+  \[
+    A\bm{x} + \bm{b}^{+} + \bm{b}^{-} = \bm{x}
+  \]
+  であるが，$A \sim R_{\bm{0}}$ より $A^2 = E$ であるから上式の両辺に左から $A$ を掛けて
+  \[
+    \bm{x} + \bm{b}^{+} -\bm{b}^{-} = A\bm{x}
+  \]
+  を得る．さらに上記2式を連立して $\bm{b}^{+} = \bm{0}$ を得る．従っ
+  て，$\bm{b} \in V_A(-1)$ である．
+
+  後半の主張は $\bm{b}/2 \in \Fix(f)$ であることと定
+  理\ref{thm:dimfix}から従う．
+\end{proof}
+
+\newpage
+
+鏡映はその名が示すように，超平面を鏡とする対称な変換である．つまり，次の定理が成り立つ．
+
+\begin{theorem}\label{thm:ref_is_sym}
+  $\mathbb{R}^n$ の鏡映 $f$ に対して以下が成り立つ．ただ
+  し，$H=\Fix(f)$ とする．
+  \begin{enumerate}[(1)]
+  \item 任意の $\bm{x} \in \mathbb{R}^n$ に対し
+    て $f(\bm{x})$ と $\bm{x}$ の中点は $H$ 上にある．
+    
+  \item 任意の $\bm{x} \in \mathbb{R}^n$ に対し
+    て $f(\bm{x})-\bm{x}$ は $H$ と直交する．
+  \end{enumerate}  
+\end{theorem}
+
+\begin{proof}
+  $f(\bm{x}) = A\bm{x}+\bm{b}$ を $\mathbb{R}^n$ の鏡映とする．
+  \begin{enumerate}[(1)]
+  \item 定理\ref{thm:refconcrete}から $\bm{b} \in V_A(-1), \; A^2=E$ な
+    ので，任意の $\bm{x} \in \mathbb{R}^n$ に対して
+    \[
+      f\left( \frac{f(\bm{x}) + \bm{x}}{2}\right) =
+      A\left(\frac{A\bm{x}+\bm{b}+\bm{x}}{2}\right)+\bm{b}
+      =\frac{A\bm{x} + \bm{b} + \bm{x}}{2} = \frac{f(\bm{x})+\bm{x}}{2}
+    \]
+    より $\left(f(\bm{x})+\bm{x}\right)/2 \in \Fix(f)$ である．
+    
+  \item 定理\ref{thm:eigen-perp}から，$\bm{p} \in V_A(1)$ に対し
+    て $(\bm{b}, \bm{p})=0$ である．従って，任意の $\bm{x} \in
+    \mathbb{R}^n$ に対して
+    \[
+      \left(f(\bm{x})-\bm{x}, \bm{p}\right)  =(A\bm{x},\bm{p})+(\bm{b},\bm{p}) - (\bm{x},\bm{p})
+      =(A\bm{x}, A\bm{p}) - (A\bm{x}, A\bm{p}) = 0
+    \]
+    より $f(\bm{x})-\bm{x}$ は $V_A(1)$ と直交する．よって，定
+    理\ref{thm:dimfix}より $H=\Fix(f)$ とも直交する．
+  \end{enumerate}
+\end{proof}
+
+逆に，超平面を鏡とする対称な変換は鏡映である．つまり，定
+理\ref{thm:ref_is_sym}の(1),(2)を満たす $\mathbb{R}^n$ の変換 $f$ は超
+平面 $H$ を固定点集合とする鏡映である．これを実際に確かめよう．
+
+$H$ を$\mathbb{R}^n$ の超平面とし，その方程式を $\bm{a} \cdot  \bm{x}=d$ とする．すなわち，
+\[
+  H = \Set{ \bm{x} \in \mathbb{R}^n | \bm{a} \cdot \bm{x} = d} \quad
+  (\bm{a} \in \mathbb{R}^n, \; d \in \mathbb{R})
+\]
+とする．このとき，$\bm{a}$ は $H$ の法線ベクトルである．実際，任意の $\bm{x}, \bm{y} \in H$ に対し
+\[
+  (\bm{a}, \bm{x}-\bm{y}) = (\bm{a}, \bm{x}) - (\bm{a}, \bm{y}) = d-d=0
+\]
+より $\bm{a}$ は $H$ に直交する．この $\bm{a}$ と $d$ を用いて定
+理\ref{thm:ref_is_sym}の(1),(2)を満たす $\mathbb{R}^n$ の変換 $f$ を具
+体的に記述する．
+
+\begin{theorem}\label{thm:ref-equation}
+  $\mathbb{R}^n$
+  の超平面$H=\Set{\bm{x} \in \mathbb{R}^n | (\bm{a}, \bm{x})=d}$ に対し，
+  定理\ref{thm:ref-equation}の(1),(2)を満たす $\mathbb{R}^n$ の変
+  換 $f$ は
+  \[
+    f(\bm{x}) = \bm{x} - \frac{2(\bm{a}, \bm{x}) - 2d}{(\bm{a}, \bm{a})} \bm{a}
+  \]
+  で与えられ，これは $H$ を固定点集合とする鏡映である．
+\end{theorem}
+\begin{proof}
+  任意に $\bm{x} \in \mathbb{R}^n$ をと
+  る．(2)より$f(\bm{x})-\bm{x}$ と $\bm{a}$ は平行なので，ある実数 $k$ に
+  よって
+  \[
+    f(\bm{x}) = \bm{x} + k \bm{a}
+  \]
+  と書ける．さらに，(1)からこれを $\left( \bm{a}, \left(f(\bm{x})+\bm{x}\right)/2\right)=d$ に代入して
+  \[
+    k = -\frac{2(\bm{a},\bm{x})-2d}{(\bm{a},\bm{a})}
+  \]
+  を得る．任意の $\bm{x},
+  \bm{y} \in \mathbb{R}^n$ に対して
+  \[
+    \begin{aligned}
+      d(f(\bm{x}), f(\bm{y}))^2 &= \|f(\bm{x}) - f(\bm{y})\|^2
+      = \left\|\bm{x} - \bm{y} - \frac{2\left(\bm{a}, \bm{x}-\bm{y}\right)}{(\bm{a}, \bm{a})} \bm{a}\right\|^2\\
+       &= \|\bm{x}-\bm{y}\|^2
+       - 2 \left( \bm{x}-\bm{y}, \frac{2(\bm{a}, \bm{x}-\bm{y})}{(\bm{a},\bm{a})}\bm{a}\right)
+       + \left( \frac{2(\bm{a}, \bm{x}-\bm{y})}{(\bm{a},\bm{a})}\right)^2(\bm{a}, \bm{a})\\
+       &= \|\bm{x}-\bm{y}\|^2 - \frac{4(\bm{a},\bm{x}-\bm{y})^2}{(\bm{a},\bm{a})}
+       + \frac{4(\bm{a}, \bm{x}-\bm{y})^2}{(\bm{a}, \bm{a})}
+        = \|\bm{x}-\bm{y}\|^2 = d(\bm{x}, \bm{y})^2
+      \end{aligned}
+  \]
+  より $f$ は $\mathbb{R}^n$ の合同変換である．また，任意の $\bm{x}
+  \in H$ に対して $f(\bm{x}) = \bm{x}$ であるから $H \subset \Fix(f)$
+  より $\dim \Fix(f) \geq \dim H = n-1$
+  である．さらに，
+  \[
+    \frac{d+1}{(\bm{a}\cdot \bm{a})}\bm{a} \notin \Fix(f)
+  \]
+  より $\Fix(f) \neq
+  \mathbb{R}^n$ であるから $\dim \Fix(f) \leq n-1$ である．従っ
+  て，$\dim\Fix(f) = n-1$ より $\Fix(f) = H$ であるから $f$ は $H$ を固
+  定点集合とする鏡映である．
+\end{proof}
+
+$\mathbb{R}^n$ の鏡映 $f$ から超平面 $\Fix(f)$ が定まり，逆に超平
+面 $H$ から $H=\Fix(f)$ となる鏡映 $f$ が定まることが分かった．この対応
+は1対1である．すなわち，次が成り立つ．
+
+\begin{theorem}\label{thm:ref-hyperplane}
+  $\mathbb{R}^n$ の任意の超平面に対し，それを固定点集合とする鏡映が唯一
+  つ存在する．
+\end{theorem}
+
+\begin{proof}
+  
+  存在性は定理\ref{thm:ref-equation}で示したので，一意性を示す．$f_1,
+  f_2$ を 超平面 $H$ を固定点集合とする鏡映と
+  し，
+  \[
+    f_1(\bm{x}) = A\bm{x} + \bm{b}, \quad f_2(\bm{x}) = B\bm{x} + \bm{c}
+  \]
+  とする．定理\ref{thm:dimfix}より $V_A(1), V_B(1)$ は共に原点を通
+  り $H$ に平行な超平面であるから
+  \[
+    V_A(1) = V_B(1)
+  \]
+  である．従って，定理\ref{thm:eigen-perp}より
+  \[
+    V_A(-1) = V_A(1)^{\perp} = V_B(1)^{\perp} = V_B(-1)
+  \]
+  である．定理\ref{thm:refconcrete}から $\bm{b} \in
+  V_A(-1) = V_B(-1)$ かつ $\bm{b}/2 \in \Fix(f_1) = H = \Fix(f_2)$ であるから
+  \[
+    \frac{\bm{b}}{2} = f_2\left( \frac{\bm{b}}{2}\right) = \frac{1}{2} B \bm{b} + \bm{c} 
+    = -\frac{\bm{b}}{2} + \bm{c} 
+  \]
+  より $\bm{b} = \bm{c}$ である．さらに，再び定
+  理\ref{thm:refconcrete}から $A \sim R_{\bm{0}} \sim B$ より正則行
+  列 $P=\left[
+    \begin{array}{ccc}
+      \bm{p}_1 & \cdots & \bm{p}_n
+    \end{array}
+  \right]$ を $(\bm{p}_1, \ldots, \bm{p}_{n-1})$ が $V_A(1)=V_B(1)$ の
+  基底で，$\bm{p}_n \in V_A(-1)=V_B(-1)$ となるようにとると
+  \[
+    A= P R_{\bm{0}} P^{-1}  = B
+  \]
+  である．よって，$f_1 = f_2$ である．
+\end{proof}
+
+\section{滑り鏡映}\label{sec:glide}
+
+鏡映と平行移動の合成によって，鏡映とは本質的に異なる合同変換である滑り鏡
+映が定義される．前節に引き続き $ R_{\bm{0}}:=\diag(1,\ldots, 1,-1)$とす
+る．
+
+\begin{definition}
+  $\mathbb{R}^n$ の超平面 $H$ に関する鏡映 $g$ と $H$ に平行なベクト
+  ル $\bm{c} \in \mathbb{R}^n$ による平行移動 $t_{\bm{c}}$ との合
+  成 $t_{\bm{c}} \circ g$ を $H$ と $\bm{c}$ に関する滑り鏡映または並進
+  鏡映という．ただし，ここで $\bm{c} \in \mathbb{R}^n$ が超平面 $H$ に
+  平行であるとは，$H$ と 直線 $\langle \bm{c} \rangle$ が平行であること
+  をいう．鏡映は滑り鏡映の一種とみなすのが自然ではあるが，本稿ではこれ
+  以後鏡映でない滑り鏡映のみを滑り鏡映と呼ぶことにする．
+\end{definition}
+
+
+\begin{theorem}\label{thm:glide}
+  $\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ は $A \sim R_{\bm{0}}$ かつ
+  $\bm{b} \notin V_A(-1)$ のとき，またそのときに限り，滑り鏡映である．
+  このとき，固有空間分解 $\mathbb{R}^n = V_A(1) \oplus V_A(-1)$ による $\bm{b}$ の分解を
+  \begin{equation}\label{eq:eigendecomp-gen}
+    \bm{b} = \bm{b}^{+} + \bm{b}^{-}, \quad \bm{b}^{+} \in V_A(1), \; \bm{b}^{-} \in V_A(-1)
+  \end{equation}
+  とすると，$f$ は $\bm{b}^{-}/2$ を通り $V_A(1)$ に平行な超平面
+  と $\bm{b}^{+}$ に関する滑り鏡映である．
+\end{theorem}
+
+\begin{proof}
+  $A \sim R_{\bm{0}}$ とする．$g(\bm{x}) = A\bm{x} + \bm{b}^{-}$ とすると，定
+  理\ref{thm:refconcrete}から $g$ は鏡映である．よって，$f =
+  t_{\bm{b}^{+}} \circ g$ より $f$ は $\bm{b}^{-}/2$ を通り $V_A(1)$ に
+  平行な超平面と $\bm{b}^{+}$ に関する滑り鏡映である．
+
+  逆に，$f$ を超平面 $H$ と $\bm{c} \in \mathbb{R}^n$ に関す滑り鏡映とす
+  る．$H$ に関する鏡映を $g(\bm{x}) = B\bm{x} + \bm{d}$ とすると
+  \[
+    f(\bm{x}) = t_{\bm{c}}\circ g(\bm{x}) = B\bm{x} + \bm{d} + \bm{c}
+  \]
+  より定理\ref{thm:affine_rep}から $A=B$ である．従って，定
+  理\ref{thm:refconcrete}より $A =B\sim R_{\bm{0}}$ である．
+\end{proof}
+
+\begin{remark}
+  滑り鏡映は鏡映と平行移動の合成であるが，合成の順序はどちらでも良い．実
+  際，滑り鏡
+  映 $f(\bm{x})=A\bm{x}+\bm{b}$ を式(\ref{eq:eigendecomp-gen})により鏡
+  映 $g(\bm{x}) = A\bm{x} + \bm{b}^{-}$ と平行移動 $t_{\bm{b}^{+}}$ に分
+  解すると，
+  \[
+    f(\bm{x}) = t_{\bm{b}^{+}} \left( g(\bm{x}) \right)= \left(A\bm{x} + \bm{b}^{-}\right) + \bm{b}^{+}
+    = A\left(\bm{x}+\bm{b}^{+}\right) + \bm{b}^{-} = g\left( t_{\bm{b}^{+}}(\bm{x})\right) 
+  \]
+  であるから $t_{\bm{b}^{+}} \circ g = g \circ t_{\bm{b}^{+}}$ である．
+\end{remark}
+
+\begin{theorem}\label{thm:inv-glide}
+  滑り鏡映には固定点がない．
+\end{theorem}
+\begin{proof}
+  $f(\bm{x}) = A\bm{x} + \bm{b}$ を滑り鏡映とする．定
+  理\ref{thm:glide}より $A \sim R_{\bm{0}}$ かつ $\bm{b} \notin
+  V_A(-1)$ である．$f$ に固定点 $\bm{x}$ があるとする
+  と，$\bm{b}$ を (\ref{eq:eigendecomp-gen}) のように分解することで定
+  理\ref{thm:refconcrete}の証明後半と同様に
+  \[
+    A\bm{x} + \bm{b}^+ + \bm{b}^- =\bm{x}, \qquad \bm{x} + \bm{b}^+ - \bm{b}^- = A\bm{x}
+  \]
+  から $\bm{b} \in V_A(-1)$ となるが，これは $\bm{b} \notin V_A(-1)$ に
+  矛盾する．
+\end{proof}
+
+この定理と定理\ref{thm:refconcrete}と定理\ref{thm:glide}から，$A\sim R_{\bm{0}}$ のときの固定点の有無に関して次が成り立つ．
+\begin{theorem}\label{thm:R0-fixed}
+  $A \sim R_{\bm{0}}$ のとき，$\mathbb{R}^n$ の合同変換
+  $f(\bm{x}) = A\bm{x} + \bm{b}$ の固定点集合 $\Fix(f)$ は，$\bm{b} \in V_A(-1)$ のとき，その
+  ときに限り空集合でない．
+\end{theorem}
+
+\newpage
+
+\section{$\mathbb{R}^n$ の合同変換の分類}\label{sec:classification}
+
+$\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ は $\det A$ の
+正負によって大きく分けられる．$\det A=1$ なら $f$ は多重回転と平行移動
+との合成なので多重螺旋と名付けることにする．一方で，$\det
+A=-1$ なら $f$ は多重回転鏡映と平行移動の合成なので多重螺旋鏡映と名付け
+ることにする．本節では，直交行列 $A$ の標準形と $\bm{b} \in
+V_A(1)^{\perp}$ か $\bm{b} \not\in V_A(1)^{\perp}$ かによって $f$ を
+さらに細かく分類する．\\
+
+まず，$n$ が偶数のときの分類が以下の定理\ref{thm:classification_even}である．
+
+\begin{theorem}\label{thm:classification_even}
+  $n=2k$ とする．$\mathbb{R}^{n}$ の合同変換 $f(\bm{x}) = A\bm{x} +
+  \bm{b}$ は次の表\ref{tab:classification_even}のように分類できる．ただ
+  し，各 $\theta_i$ は $S_{\theta_i} \neq E_2$ を満たすと
+  し，$R_{\bm{0}} := R(0, \ldots, 0)= \diag(1,\ldots, 1, -1)$ とする．
+  なお，$A$ の標準形が $S(\theta_1, \ldots, \theta_k)$ のとき
+  は $V_A(1)=\Set{\bm{0}}$ なので必ず
+  $\bm{b} \in V_A(1)^{\perp}=\mathbb{R}^n$ となる．
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c|c}
+      大分類 & 小分類 & $A$ の標準形 & $\bm{b} \overset{?}{\in} V_A(1)^{\perp}$  & $\dim \Fix(f)$  \\ \hline
+      多重螺旋 & 恒等変換 & \multirow{2}{*}{$E$} & YES  & $n$\\
+      $(\det A =1)$  & 平行移動 & & NO  & --\\ \cline{2-5}
+             & 単回転 & \multirow{2}{*}{$S(\theta_1, 0, \ldots, 0)$} & YES & $n-2$\\
+             & 単螺旋 & & NO & --\\ \cline{2-5}
+             & $2$ 重回転  & \multirow{2}{*}{$S(\theta_1, \theta_2, 0, \ldots, 0)$} & YES & $n-4$\\
+             & $2$ 重螺旋 & & NO & -- \\ \cline{2-5}
+             & \vdots & \vdots & \vdots & \vdots \\ \cline{2-5}
+             & $k-1$ 重回転 & \multirow{2}{*}{$S(\theta_1, \ldots, \theta_{k-1},0)$ } & YES & 2\\
+             & $k-1$ 重螺旋 & & NO & -- \\ \cline{2-5}
+             & $k$ 重回転 & $S(\theta_1, \ldots, \theta_k)$ & YES & $0$ \\ \hline \hline
+      多重螺旋鏡映 &  鏡映 & \multirow{2}{*}{$R_{\bm{0}}$} & YES & $n-1$\\
+      $(\det A = -1)$ & 滑り鏡映 & & NO & -- \\ \cline{2-5}
+             & 単回転鏡映 & \multirow{2}{*}{$R(\theta_1, \theta_2, 0, \ldots, 0)$} & YES & $n-3$\\
+             & 単螺旋回転 & & NO & -- \\ \cline{2-5}
+             & $2$ 重回転鏡映 & \multirow{2}{*}{$R(\theta_1, \theta_2, 0, \ldots, 0)$} & YES & $n-5$\\
+             & $2$ 重螺旋鏡映 & & NO & -- \\ \cline{2-5}
+             & \vdots & \vdots & \vdots & \vdots\\ \cline{2-5}
+             & $k-1$ 重回転鏡映 & \multirow{2}{*}{$R(\theta_1, \ldots, \theta_{k-1})$} & YES & $1$\\
+             &$k-1$ 重螺旋鏡映 & & NO & --
+    \end{tabular}
+    \caption{$\mathbb{R}^{2k}$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ の分類表}
+    \label{tab:classification_even}
+  \end{table}
+
+
+\end{theorem}
+
+\newpage
+
+続いて，$n$ が奇数のときの分類が以下の定理\ref{thm:classification_odd}である．
+
+\begin{theorem}\label{thm:classification_odd}
+  $n=2k+1$ とする．$\mathbb{R}^{n}$ の合同変換 $f(\bm{x}) = A\bm{x} +
+  \bm{b}$ は次の表\ref{tab:classification_odd}のように分類できる．ただ
+  し，各 $\theta_i$ は $S_{\theta_i} \neq E_2$ を満たすと
+  し，$R_{\bm{0}} := S^{-}(0, \ldots, 0)= \diag(1,\ldots, 1, -1)$ とす
+  る．なお，$A$ の標準形が $S^{-}(\theta_1, \ldots, \theta_k)$ のとき
+  は $V_A(1)=\Set{\bm{0}}$
+  なので 必ず$\bm{b} \in V_A(1)^{\perp} = \mathbb{R}^n$ となる．
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}[h]{c|c|c|c|c}
+      大分類 & 小分類 & $A$ の標準形 & $\bm{b} \overset{?}{\in} V_A(1)^{\perp}$ & $\dim \Fix(f)$  \\ \hline
+      多重螺旋 & 恒等変換 & \multirow{2}{*}{ $E$} & YES & $n$\\
+      $(\det A =1)$ & 平行移動 & & NO & -- \\ \cline{2-5} 
+             & 単回転 & \multirow{2}{*}{$S^{+}(\theta_1, 0, \ldots, 0)$} & YES & $n-2$\\
+             & 単螺旋 & & NO & -- \\ \cline{2-5}
+             & $2$ 重回転 & \multirow{2}{*}{$S^{+}(\theta_1, \theta_2, 0, \ldots, 0)$} & YES & $n-4$ \\
+             & $2$ 重螺旋 & & NO & -- \\ \cline{2-5}
+             & \vdots & \vdots & \vdots & \vdots \\ \cline{2-5}
+             & $k$ 重回転 & \multirow{2}{*}{$S^{+}(\theta_1, \ldots, \theta_k)$} & YES & $1$\\
+             & $k$ 重螺旋 & & NO & -- \\\hline \hline
+      多重螺旋鏡映 & 鏡映 & \multirow{2}{*}{$R_{\bm{0}}$} & YES  & $n-1$\\
+      $(\det A = -1)$ & 滑り鏡映 & & NO & -- \\ \cline{2-5}
+             & 単回転鏡映 & \multirow{2}{*}{$S^{-}(\theta_1, 0, \ldots, 0)$} & YES & $n-3$\\
+             & 単螺旋鏡映 & & NO & -- \\ \cline{2-5}
+             & $2$ 重回転鏡映 & \multirow{2}{*}{$S^{-}(\theta_1, \theta_2, 0, \ldots, 0)$} & YES & $n-5$ \\
+             & $2$ 重螺旋鏡映 & & NO & --  \\ \cline{2-5}
+             & \vdots & \vdots & \vdots & \vdots\\ \cline{2-5}
+             & $k-1$ 重回転鏡映 & \multirow{2}{*}{$S^{-}(\theta_1, \ldots, \theta_{k-1},0)$} & YES & $2$\\
+             & $k-1$ 重螺旋鏡映 & & NO & -- \\ \cline{2-5}
+             & $k$ 重回転鏡映 & $S^{-}(\theta_1, \ldots, \theta_k)$ & YES & $0$
+    \end{tabular}
+    \caption{$\mathbb{R}^{2k+1}$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ の分類表}
+    \label{tab:classification_odd}
+  \end{table}
+
+\end{theorem}
+
+定理\ref{thm:classification_even}と定理\ref{thm:classification_odd}のい
+ずれにおいても，$\bm{b} \overset{?}{\in} V_A(1)^{\perp}$ が YES か NO かは，$f$ が固
+定点を持つか持たないかを判別している．つまり，次が成り立つ．
+
+\begin{theorem}\label{thm:exist_fixed}
+  $\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} +
+  \bm{b}$ の固定点集合 $\Fix(f)$は，$\bm{b} \in V_A(1)^{\perp}$ のとき，そのときに限
+  り空集合でない．なお，$1$ が $A$ の固有値でないとき
+  は $V_A(1) = \{\bm{0}\}$ とする．
+\end{theorem}
+
+\begin{proof}
+  まず，$\bm{b} \in V_A(1)^{\perp}$ とする．$\mathbb{R}^n$ の線形変
+  換 $g(\bm{x}) = \bm{x} - A\bm{x}$ と任意の $\bm{x} \in
+  \mathbb{R}^n$ と任意の $\bm{p} \in V_A(1)$ に対して
+  \[
+    g(\bm{x}) \cdot \bm{p} = \bm{x} \cdot \bm{p} - (A\bm{x}) \cdot
+    \bm{p} = \bm{x}\cdot \bm{p} - (A\bm{x}) \cdot (A\bm{p}) = \bm{x} \cdot \bm{p} - \bm{x} \cdot \bm{p} = 0
+  \]
+  だから，$g(\mathbb{R}^n) \subset V_A(1)^{\perp}$
+  である．また，$\ker g = V_A(1)$ なので線形変換の次元定理から
+  \[
+    \dim g(\mathbb{R}^n) = \dim \mathbb{R}^n - \dim \ker g = n - \dim V_A(1) = \dim V_A(1)^{\perp}
+  \]
+  より，$g(\mathbb{R}^n) = V_A(1)^{\perp}$
+  である．よって，$\bm{b} = g(\bm{c}) = \bm{c} - A\bm{c}$ とな
+  る $\bm{c} \in \mathbb{R}^n$ が存在する．すなわち，$\bm{c} \in
+  \Fix(f)$ なので $\Fix(f)$ は空集合でない．
+
+  逆に，$\Fix(f)$ が空集合でないとし，任意に $\bm{c} \in \Fix(f)$ をと
+  る．$\bm{b} = \bm{c} - A\bm{c}$ だから，任意の $\bm{p} \in V_A(1)$ に対して
+  \[
+    \bm{b} \cdot \bm{p} = \bm{c} \cdot \bm{p} - (A\bm{c}) \cdot \bm{p}
+    = \bm{c} \cdot \bm{p} - (A\bm{c}) \cdot (A\bm{p}) = \bm{c} \cdot
+    \bm{p} - \bm{c} \cdot \bm{p}=0
+  \]
+  より，$\bm{b} \in V_A(1)^{\perp}$ である．
+\end{proof}
+
+\begin{remark}
+  $A \sim R_{\bm{0}}=\diag(1, \ldots, 1, -1)$ のと
+  き $V_A(1)^{\perp}=V_A(-1)$ なので，定
+  理\ref{thm:R0-fixed}はこの定理\ref{thm:exist_fixed}の特別な場合である．
+\end{remark}
+
+
+$\mathbb{R}^n$ の合同変換は固定点の有無によって「直交変換及びその仲間」
+とそうでないものとに分けることができる．合同変
+換 $f(\bm{x}) = A\bm{x} + \bm{b}$ は直交変換 $T_A$ と平行移動 $t_{\bm{b}}$ の合成と
+して
+\[
+  f = t_{\bm{b}} \circ T_A
+\]
+と書ける．ここで，$f$ に固定
+点 $\bm{c}$ が存在すれば，任意の $\bm{x} \in \mathbb{R}^n$ に対して次が成り立つ．
+\begin{equation}\label{eq:fixed}
+  f(\bm{x})-\bm{c}  = A(\bm{x} - \bm{c})  
+\end{equation}
+このとき $f$ は直交変換 $T_A$ と同じクラスの合同変換である．例え
+ば，$T_A$ が鏡映なら $f$ も鏡映であり，$T_A$ が多重回転なら $f$ も多重
+回転である．これは，$\mathbb{R}^n$ のベクトルを全て $\bm{c}$ を起点とす
+るベクトルと見なし直しているということである．合同変
+換 $f$ は，$\mathbb{R}^n$ の原点 $\bm{0}$ を起点とするベクト
+ル $\bm{x}$ をやはり $\bm{0}$ を起点とするベクトル $\bm{y}:=
+f(\bm{x})$ に写す変換である．式 (\ref{eq:fixed})
+はこれが起点を $\bm{c}$ だけずらしたベクトル
+\[
+  \bm{x}'= \bm{x} - \bm{c}, \quad \bm{y}'=\bm{y}-\bm{c}
+\]
+の間の変換として
+\[
+  \bm{y}' = A\bm{x}' = T_A(\bm{x}')
+\]
+と書けることを表している．つまり，平行移動によって $\bm{c}$ を原点とす
+るように座標変換を行えば，$f$ を直交変換 $T_A$ とみなせる．このような合
+同変換 $f$ には直交変換 $T_A$ と同じ名前を付けようというのが本稿での分
+類の基本方針である．このとき，$f$ の固定点集合 $\Fix(f)$ は直交変
+換 $T_A$ の固定点集合
+$V_A(1)=\Set{\bm{x} \in \mathbb{R}^n | A\bm{x} = \bm{x}}$ を $\bm{c}$
+だけ平行移動した集合である．
+\[
+  \Fix(f) = \bm{c} + V_A(1) :=\Set{ \bm{c} + \bm{x}  \in \mathbb{R}^n | \bm{x} \in V_A(1)}
+\]
+
+一方で，$f$ に固定点がなければ（例えば滑り鏡映のような），$f$ は直交変
+換の中には現れない種類の合同変換であり，こちらは平行移動を合成したから
+こそ現れる合同変換である．
+
+つまるところ，合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ に固定点があれ
+ば $f$ には $T_A$ と同じ名前を付け，固定点がなければ新たな名前を付けた
+いのである．その固定点の有無を定理\ref{thm:exist_fixed}を使っ
+て $\bm{b} \in V_A(1)^{\perp}$ か $\bm{b} \not\in V_A(1)^{\perp}$ かに
+よって類別していけば，定理\ref{thm:classification_even},
+\ref{thm:classification_odd}のような分類に至る．
+
+
+\newpage
+
+\section{鏡映の個数}\label{sec:n+1-reflection}
+
+本節では $\mathbb{R}^n$ の任意の合同変換が高々 $n+1$ 個の鏡映の合成に分
+解できることを示す．以下，$(\bm{e}_1, \ldots, \bm{e}_n)
+$ を $\mathbb{R}^n$ の標準基底とする．
+
+\begin{lemma}\label{lem:0id}
+  $\bm{0}, \bm{e}_1, \ldots, \bm{e}_n \in \mathbb{R}^n$ を固定す
+  る $\mathbb{R}^n$ の合同変換は恒等変換に限る．
+\end{lemma}
+
+\begin{proof}
+  $\mathbb{R}^n$ の合同変換 $f$ が $\bm{0}, \bm{e}_1, \ldots \bm{e}_n$ を
+  固定するとする．$f$ は原点を固定するので定理\ref{thm:prev0}から，あ
+  る $A \in O(n)$ によって $f(\bm{x}) = A\bm{x}$ と書ける．さら
+  に，$f(\bm{e}_1) = \bm{e}_1, \ldots, f(\bm{e}_n) = \bm{e}_n$ だから
+  \[
+    A=\left[
+     \begin{array}{ccc}
+       A\bm{e}_1 & \cdots & A\bm{e}_n
+     \end{array}
+   \right]=\left[
+     \begin{array}{ccc}
+       f(\bm{e}_1) & \cdots & f(\bm{e}_n)
+     \end{array}
+   \right]=\left[
+      \begin{array}{ccc}
+        \bm{e}_1 & \cdots & \bm{e}_n
+      \end{array}
+    \right] =E
+  \]
+  より，$f$ は恒等変換である．
+\end{proof}
+
+\begin{theorem}
+  $\mathbb{R}^n$ の合同変換は $n+1$ 個以下の鏡映の合成に分解できる．
+\end{theorem}
+
+\begin{proof}
+  $f$ を $\mathbb{R}^n$ の合同変換とする．$\mathbb{R}^n$ の恒等変換また
+  は鏡映であって，次を満たす $\sigma_0, \sigma_1 \ldots, \sigma_n$ が存
+  在することを示せばよい．
+  \[
+    f=\sigma_0 \circ \sigma_1 \circ \cdots \circ \sigma_n
+  \]
+
+  まず，$f(\bm{0}) = \bm{0}$ ならば $\sigma_0$ を恒等変換と
+  し，$f(\bm{0}) \neq \bm{0}$ ならば $\bm{0}$ と $f(\bm{0})$ の垂直二等
+  分超平面 $H_0$ に関する鏡映を $\sigma_0$ として，$f_0=\sigma_0 \circ
+  f$
+  とする．このとき，$f_0(\bm{0}) = \sigma_0 \left( f(\bm{0})\right) =
+  \bm{0}$ より，$f_0$ は $\bm{0}$ を固定する合同変換である．
+  
+  次に，$f_0(\bm{e}_1) = \bm{e}_1$ ならば $\sigma_1$を恒等変換と
+  し，$f_0(\bm{e}_1) \neq \bm{e}_1$ なら
+  ば $\bm{e}_1$ と$f_0(\bm{e}_1)$ の垂直二等分超平面 $H_1$ に関する鏡映
+  を $\sigma_1$ として，$f_1=\sigma_1 \circ f_0$ とする
+  と $f_1(\bm{e}_1) = \sigma_1(f_0(\bm{e}_1)) = \bm{e}_1$ である．さら
+  に，$f_1(\bm{0}) = \bm{0}$ である．実際，$\sigma_1$ が恒等変換なら明
+  らかで，$H_1$ に関する鏡映なら
+  \[
+    d(\bm{e}_1, \bm{0}) = d\left(f_0(\bm{e}_1), f_0(\bm{0})\right)
+    = d\left( f_0(\bm{e}_1), \bm{0}\right)
+  \]
+  より，$\bm{0} \in H_1$ だから
+  $f_1(\bm{0}) = \sigma_1 \left( f_0(\bm{0})\right) = \sigma_1(\bm{0})
+  = \bm{0}$ である．従って，$\sigma_1$ がいずれの場合
+  も $f_1$ は $\bm{0}, \bm{e}_1$ を固定する合同変換である．
+
+  以下，これを繰り返して $f_i \; ( i=1, \ldots, n)$ を構成する．すなわ
+  ち，$f_{i-1}(\bm{e}_i) = \bm{e}_i$ ならば $\sigma_i$ を恒等変換と
+  し，$f_{i-1}(\bm{e}_i) \neq \bm{e}_i$ なら
+  ば $\bm{e}_i$ と $f_{i-1}(\bm{e}_i)$ の垂直二等分超平面 $H_i$ に関す
+  る鏡映を $\sigma_i$ として，$f_i=:\sigma_i \circ f_{i-1}$ とする．こ
+  のとき，各 $f_i$ は $\bm{0}, \bm{e}_1, \ldots, \bm{e}_{i}$ を固定する
+  合同変換である．特に，$f_n$ は $\bm{0}, \bm{e}_1, \ldots, \bm{e}_n$
+  を固定するので，補題\ref{lem:0id}から $f_n$ は恒等変換である．よっ
+  て，
+  \[
+    \id_{\mathbb{R}^n} =  f_n = \sigma_n \circ  \cdots \circ \sigma_1 \circ \sigma_0 \circ f
+  \]
+  より $f$ は以下のように $n+1$ 個の鏡映または恒等変換の合成に分解できる．
+  \[
+    f = \left( \sigma_n \circ \cdots \circ \sigma_1 \circ \sigma_0\right)^{-1}
+    = \sigma_0^{-1} \circ \sigma_1^{-1} \circ \cdots \circ \sigma_n^{-1}
+    = \sigma_0 \circ \sigma_1 \circ \cdots \circ \sigma_n
+  \]
+\end{proof}
+
+
+
+\newpage
+
+\section{$\mathbb{R}^n$ の合同変換群}\label{sec:orthogonal}
+
+$\mathbb{R}^n$ の合同変換に関して群論的にまとめておく．まとめるだけで特
+にこれ以上の話題は用意していないが，普通の数学書ならここからが本題で
+ある．
+
+\begin{definition}
+  $\mathbb{R}^n$ の合同変換全体は写像の合成により群をなす．この群
+  を $\mathbb{R}^n$ の合同変換群といい，$\Isom(\mathbb{R}^n)$ で表す．
+\end{definition}
+
+\begin{definition}
+  $\mathbb{R}^n$ の平行移動全体
+  \[
+    \mathbb{T}(\mathbb{R}^n):=\Set{ t_{\bm{b}} | \bm{b} \in \mathbb{R}^n}
+  \]
+  は $\Isom(\mathbb{R}^n)$ の部分群をなす．明らかに $\mathbb{T}(\mathbb{R}^n)$ は加
+  法群 $\mathbb{R}^n$ に群として同型である．
+\end{definition}
+
+\begin{definition}
+  $\mathbb{R}^n$ の直交変換全
+  体 $O(\mathbb{R}^n)$ は $\Isom(\mathbb{R}^n)$ の部分群をなす．これを
+  直交変換群という．明らかに $O(\mathbb{R}^n)$ は $n$ 次直交
+  群 $O(n):=\Set{ A \in GL(n,\mathbb{R}) | {}^{t}A A = E}$に群として
+  同型である．
+\end{definition}
+
+
+定理\ref{thm:affine_rep}から写像
+\[
+  \varphi : \Isom(\mathbb{R}^n) \to O(\mathbb{R}^n) \ ; \ f \mapsto t_{-f(\bm{0})} \circ f 
+\]
+は全射群準同型であり，明らかに $\ker \varphi = \mathbb{T}(\mathbb{R}^n)$ なの
+で，$\mathbb{T}(\mathbb{R}^n)$ は $\Isom(\mathbb{R})^n$ の正規部分群である．従って，
+群準同型定理から
+\[
+  \Isom(\mathbb{R}^n)/\mathbb{T}(\mathbb{R}^n) \simeq O(\mathbb{R}^n)
+\]
+である．これより合同変換群の以下のような半直積表示が得られる．
+\[
+  \Isom(\mathbb{R}^n) = O(\mathbb{R}^n)  \ltimes \mathbb{T}(\mathbb{R}^n) \simeq O(n)\ltimes \mathbb{R}^n
+\]
+$2$ つの合同変換
+$f_1(\bm{x}) = A_1 \bm{x} + \bm{b}_1$ と $f_2(\bm{x}) = A_2 \bm{x} +
+\bm{b}_2$ の合成 $f_1 \circ f_2$ は
+\[
+  \left(f_1 \circ f_2 \right)(\bm{x}) =  f_1\left( f_2\left( \bm{x}\right)\right)
+  = f_1\left(A_2\bm{x}+\bm{b}_2\right) = A_1\left(A_2\bm{x} + \bm{b}_2\right) + \bm{b}_1
+  = \left( A_1 A_2\right) \bm{x} + \left( \bm{b}_1 + A_1 \bm{b}_2\right)
+\]
+と書ける．これより半直積表示 $f_1 = (A_1, \bm{b}_1), \; f_2 = (A_2,
+\bm{b}_2)$ での群演算が次のように書ける．
+\[
+  \left(A_1, \bm{b}_1\right)  \left( A_2, \bm{b}_2\right) = \left( A_1 A_2, \bm{b}_1 + A_1 \bm{b}_2\right)
+\]
+
+
+また，$n$ 次特殊直交群 $SO(n):=\Set{A \in O(n) | \det
+  A=1}$ は $O(n)$ の部分群であり，直交行列の行列式は $\pm 1$ なので
+\[
+  \det : O(n) \to \Set{\pm 1} \ ; \ A \mapsto \det A
+\]
+は全射群準同型である．明らかに $\ker (\det) = SO(n)$ なので，$SO(n)$
+は $O(n)$ の正規部分群である．従って，群準同型定理から
+\[
+  O(n)/SO(n) \simeq \Set{\pm 1} \simeq \mathbb{Z}/2\mathbb{Z}
+\]
+である．特に，$R_{\bm{0}}:=\diag(1,\ldots, 1, -1) \in O(n) \setminus
+SO(n)$ に対して $R_{\bm{0}}^2 =E$ より，以下の $O(n)$ の半直積表示が得られる．
+\[
+  O(n) = \Set{E, R_{\bm{0}}} \ltimes SO(n) \simeq  \mathbb{Z}/2\mathbb{Z} \ltimes SO(n)
+\]
+
+本稿では，$\mathbb{R}^n$ の合同変換を固定点の有無によって直交変換の仲間
+とそうでないものに分けた．合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ に固
+定点 $\bm{c}$ があれば，式 (\ref{eq:fixed})から
+\[
+  f = t_{\bm{c}} \circ T_A \circ t_{-\bm{c}} = t_{\bm{c}} \circ T_A \circ t_{\bm{c}}^{-1}
+\]
+と書ける．これは，$\Isom(\mathbb{R})$ の正規部分
+群 $\mathbb{T}(\mathbb{R}^n)$ に関して $f$ が直交変換 $T_A$ と同じ共役
+類に属することを意味している．固定点の有無によって合同変換を分けるのは，
+合同変換群 $\Isom(\mathbb{R}^n)$ を正規部分
+群 $\mathbb{T}(\mathbb{R}^n)$ による共役類に分類したときに，直交変換と
+同じクラスに属するものとそうでないものに分けていることに相当する．
+
+\section{$\mathbb{R}^n$ の合同変換と $n+1$ 次正方行列}\label{sec:matrix}
+
+$\mathbb{R}^n$ の合同変換 $f(\bm{x}) = A\bm{x} + \bm{b}$ は $n+1$ 次正方行列と $n+1$ 次列ベクトルの積を用いて
+\begin{align*}
+  \left[
+  \begin{array}{c}
+    f(\bm{x})\\
+    1
+  \end{array}
+  \right] = \left[
+  \begin{array}{cc}
+    A & \bm{b}\\
+    \bm{0} & 1
+  \end{array}
+             \right] \left[
+             \begin{array}{c}
+               \bm{x}\\
+               1
+             \end{array}
+  \right]
+\end{align*}
+と表すことができる．さらに，合同変換
+$f_1(\bm{x})=A_1 \bm{x} + \bm{b}_1, \, f_2(\bm{x}) = A_2\bm{x} +
+\bm{b}_2$ の合成
+\[
+  f_1\circ f_2(\bm{x}) =  f_1\left( f_2\left( \bm{x}\right) \right) 
+  = f_1\left( A_2 \bm{x}+\bm{b}_2\right) = A_1 A_2 \bm{x} + \bm{b}_1+A_1\bm{b}_2
+\]
+は $n+1$ 次行列同士の積として
+\begin{align*}
+  \left[
+  \begin{array}{cc}
+    A_1 & \bm{b}_1\\
+    \bm{0} & 1
+  \end{array}
+             \right] \left[
+             \begin{array}{cc}
+               A_2 & \bm{b}_2\\
+               \bm{0} & 1
+             \end{array}
+                        \right] = \left[
+                        \begin{array}{cc}
+                          A_1 A_2 & \bm{b}_1+A_1\bm{b}_2\\
+                          \bm{0} & 1
+                        \end{array}
+                                   \right]
+\end{align*}
+と表せる．これにより $\mathbb{R}^n$ の合同変換を $n+1$ 次正方行列の演算
+で記述できる．これは $\mathbb{R}^n$ のアフィン変換を $\mathbb{P}^n$ の
+射影変換として扱う方法でもある．
+
+% 合同変換群 $\Isom(\mathbb{R}^n)$ はアフィン変換群 $\Aff(\mathbb{R}^n)$
+% の部分群であり，アフィン変換群 $\Aff(\mathbb{R}^n)$ は射影変換
+% 群 $\PGL(n,\mathbb{R})$ の部分群である．
+
+%\newpage
+
+\section*{演習問題}
+
+\begin{enumerate}
+  \setlength{\itemsep}{1zh}
+
+\item $\mathbb{R}^n$ の一般の位置にある $n+1$ 個の点，すなわ
+  ち $\overrightarrow{\mathrm{P}_0\mathrm{P}_1}, \ldots, \overrightarrow{\mathrm{P}_0\mathrm{P}_n}$ が1次独
+  立となる点 $\mathrm{P}_0, \mathrm{P}_1, \ldots, \mathrm{P}_n$ を固定する合同変換は恒等変換に限る
+  ことを証明しよう．
+
+% \item 直交行列の実固有値に関する以下の命題を証明しよう．
+
+%   \begin{enumerate}[(1)]
+
+%   \item $A \in SO(n)$ が $-1$ を固有値に持つとき，その重複度は偶数である．
+    
+%   \item $A \in SO(n)$ が $1$ を固有値に持つとき，その重複度の偶奇は $n$ の偶奇に等しい．
+    
+%   \item 任意の $A \in O(n) \setminus SO(n)$ は $-1$ を固有値に持ち，その
+%     重複度は奇数である．
+    
+%     % \begin{proof}
+%     %   任意に $A \in O(n) \setminus SO(n)$ をとる．$A$ の固有多項式は実数係数 $n$ 次多項式なので，$\lambda
+%     %   \in \mathbb{C}$ が $A$ の固有値ならその共役 $\bar{\lambda}$ も $A$ の
+%     %   固有値である．従って，$A$ の固有多項式は
+%     %   \[
+%     %     \det(xE-A)=(x-1)^r(x+1)^s(x-\lambda_1)(x-\bar{\lambda}_1) \cdots (x-\lambda_t)(x-\bar{\lambda}_t)
+%     %   \]
+%     %   と書ける．ただし，$r,s,t \geq 0, \; r+s+2t=n, \; \lambda_{1},
+%     %   \ldots, \lambda_t \in \mathbb{C}\setminus \mathbb{R}$ である．よって，定理\ref{thm:eigenvalue}から
+%     %   \[
+%     %     \det A = (-1)^s |\lambda_1|^2 \cdots |\lambda_{t}|^2 = (-1)^s = -1
+%     %   \]
+%     %   より，$s$ は奇数である．すなわち，$-1$ は $A$ の重複度 $s$ の固有値である．
+%     % \end{proof}
+    
+%   \item $A \in O(n) \setminus SO(n)$ が $1$ を固有値に持つとき，その重
+%     複度と $n+1$ の偶奇は等しい．
+    
+%   \end{enumerate}
+
+% \item\label{ex:stdform} $k \; (\geq 1)$ を自然数とし，実数 $\theta$ に対し $S_{\theta} = \left[
+%     \begin{array}{rr}
+%       \cos \theta & -\sin \theta\\
+%       \sin \theta & \cos \theta
+%     \end{array}
+%   \right]$ とする．
+
+%   \begin{enumerate}[(1)]
+%   \item 任意の $A \in O(2k+1)$ はある直交行列 $P \in SO(2k+1)$ により次
+%     のように標準化されることを示そう．ただし，$e^{\i\theta_1},
+%     e^{-i\theta_1} \ldots, e^{\i\theta_k}, e^{-i\theta_k} , \pm
+%     1$ は $A$ の固有値である．
+%     \[
+%       P^{-1} A P = \left[
+%         \begin{array}{cccc}
+%           S_{\theta_1} & & & \mbox{O}\\
+%                        & \ddots & &\\
+%                        & & S_{\theta_k} &\\
+%           \mbox{O} & & & \pm 1
+%         \end{array}
+%       \right]
+%     \]
+
+%   \item 任意の $A \in SO(2k)$ はある直交行列 $P \in SO(2k)$ により次
+%     のように標準化されることを示そう．ただし，$e^{\i\theta_1},
+%     e^{-i\theta_1}, \ldots, e^{\i\theta_{k}}, e^{-i\theta_k}$ は $A$ の固
+%     有値である．
+%     \[
+%       P^{-1} A P = \left[
+%         \begin{array}{ccc}
+%           S_{\theta_1 } & & \mbox{O}\\
+%                         & \ddots & \\
+%           \mbox{O} & & S_{\theta_k}
+%         \end{array}
+%       \right]
+%     \]
+
+%   \item 任意の $A \in O(2k) \setminus SO(2k)$ はある直交行列 $P \in
+%     SO(2k)$ により次のように標準化されることを示そう．ただ
+%     し，$e^{\i\theta_1}, e^{-i\theta_1}\ldots, e^{\i \theta_{k-1}},
+%     e^{-i\theta_{k-1}}, 1, -1$ は $A$ の固有値である．
+%     \[
+%       P^{-1} A P = \left[
+%         \begin{array}{ccccc}
+%           S_{\theta_1} & & & & \mbox{O}\\
+%                        & \ddots & & &\\
+%                        & & S_{\theta_{k-1}} & &\\
+%                        & & & 1 & \\
+%           \mbox{O} & & & & -1
+%         \end{array}
+%       \right]
+%     \]
+%   \end{enumerate}
+
+
+% \item \label{ex:allone}固有値が全て $1$ の直交行列は単位行列であることを証明しよう．
+
+\item $\mathbb{R}^n$ の内積が正定値対称行列
+  $G$によって$(\bm{x}, \bm{y}) = {}^{t} \bm{x} G \bm{y}$ と与えられると
+  き，これまでの議論はどこがどう変わるか考えよう．
+
+\item 内積に正定値性を仮定しない場合，これまでの議論はどこがどう変わるか考えよう．
+  
+\item $\mathbb{R}^n$ 上の距離が通常とは異なるとき，これまでの議論はどこがどう
+  変わるか考えよう．
+
+\end{enumerate}
+
+\end{document}

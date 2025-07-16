@@ -1,3 +1,5 @@
 # 線形代数たっぷり　 ユークリッド空間の合同変換
 
 $n$ 次元ユークリッド空間の合同変換を分類してみた．線形代数をふんだんに，遠慮なく使いました．
+
+平面と空間，つまり，2次元と3次元ユークリッド空間の合同変換については[別記事](https://github.com/kazutsumi/CongruentTransformation/blob/main/CongTrans.pdf)にまとめています．
